@@ -118,11 +118,11 @@ export function IntakeModal({ isOpen, onClose, onSuccess }: IntakeModalProps) {
               type="button"
               onClick={() => {
                 onClose();
-                setActiveTab('inspections');
+                setActiveTab('register');
               }}
               className="px-3 py-1.5 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold text-xs transition-colors shrink-0 shadow-xs cursor-pointer"
             >
-              Open Camera →
+              Open Camera & Auto-Detect →
             </button>
           </div>
           {feedback && (

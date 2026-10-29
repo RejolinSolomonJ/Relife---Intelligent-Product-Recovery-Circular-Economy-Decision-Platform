@@ -48,6 +48,7 @@ import {
 
 interface InspectionWorkbenchProps {
   initialCameraAutoStart?: boolean;
+  isRegistrationMode?: boolean;
 }
 
 const DEFECT_COLORS: Record<string, string> = {
@@ -60,7 +61,10 @@ const DEFECT_COLORS: Record<string, string> = {
   default: '#0284C7',       // Sky Blue
 };
 
-export function InspectionWorkbench({ initialCameraAutoStart = false }: InspectionWorkbenchProps) {
+export function InspectionWorkbench({
+  initialCameraAutoStart = false,
+  isRegistrationMode = false,
+}: InspectionWorkbenchProps) {
   // Session return ID for this inspection cycle
   const [returnId, setReturnId] = useState<string>(() => `REL-INSP-${Date.now().toString().slice(-5)}`);
   const [samples, setSamples] = useState<SampleImageItem[]>([]);
@@ -294,17 +298,21 @@ export function InspectionWorkbench({ initialCameraAutoStart = false }: Inspecti
           </div>
           <div>
             <h2 className="text-sm font-extrabold text-slate-900 tracking-tight">
-              Live Camera Capture & OpenCV Optical Defect Inspection Suite
+              {isRegistrationMode
+                ? 'Visual Product Registration & Instant Defect Triage'
+                : 'Live Camera Capture & OpenCV Optical Defect Inspection Suite'}
             </h2>
             <p className="text-xs text-slate-600 mt-0.5">
-              Real-time Laplacian blur quality rating, contour segmentation, defect localization & 5-pathway circular decision engine.
+              {isRegistrationMode
+                ? 'Point camera at product or upload an image — OpenCV & trained ML classifier auto-detect product category (Phone, Cloth, Laptop, Mouse), find defects, and register return.'
+                : 'Real-time Laplacian blur quality rating, contour segmentation, defect localization & 5-pathway circular decision engine.'}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           <span className="px-3 py-1 rounded-full bg-white text-xs font-mono text-[#073E2E] border border-emerald-200 font-bold shadow-xs">
-            OpenCV Bilateral Denoised
+            {isRegistrationMode ? 'Auto-Register Active' : 'OpenCV Bilateral Denoised'}
           </span>
           <span className="px-3 py-1 rounded-full bg-[#073E2E] text-white text-xs font-bold shadow-xs">
             Universal Recovery
@@ -321,10 +329,35 @@ export function InspectionWorkbench({ initialCameraAutoStart = false }: Inspecti
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
                 <Camera className="w-4 h-4 text-[#073E2E]" />
-                <span>Multi-Source Intake Selection</span>
+                <span>{isRegistrationMode ? 'Product Registration Intake' : 'Multi-Source Intake Selection'}</span>
               </span>
               <span className="text-[10px] font-mono text-slate-400">
                 Session: {returnId}
+              </span>
+            </div>
+
+            {/* Drag & Drop Upload Zone */}
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                  const filesArray = Array.from(e.dataTransfer.files).slice(0, 5);
+                  setUploadedFiles(filesArray);
+                  setSelectedSample('');
+                  setPreviewUrl(URL.createObjectURL(filesArray[0]));
+                  triggerOpenCVInspection(filesArray, '');
+                }
+              }}
+              className="border-2 border-dashed border-emerald-200 hover:border-[#073E2E] bg-emerald-50/40 hover:bg-emerald-50/80 rounded-2xl p-4 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1.5"
+            >
+              <UploadCloud className="w-6 h-6 text-[#073E2E]" />
+              <span className="text-xs font-bold text-slate-800">
+                Click to browse photo or drag & drop image here
+              </span>
+              <span className="text-[10px] text-slate-500">
+                Auto-detects product (Phone, Cloth, Laptop, Mouse) & localizes defects
               </span>
             </div>
 

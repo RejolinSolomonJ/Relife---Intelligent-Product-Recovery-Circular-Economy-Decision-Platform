@@ -144,8 +144,8 @@ export default function DashboardPage() {
                 <HeroBanner
                   kpis={data?.kpis || null}
                   isLoading={isLoading}
-                  onOpenIntake={() => setIsAddModalOpen(true)}
-                  onOpenScan={() => setActiveTab('inspections')}
+                  onOpenIntake={() => setActiveTab('register')}
+                  onOpenScan={() => setActiveTab('register')}
                   onRunTriage={handleRunTriage}
                   onOpenReviewQueue={handleOpenReviewQueue}
                   onOpenTransfer={() => setActiveTab('recommendations')}
@@ -209,7 +209,7 @@ export default function DashboardPage() {
               defectFilter={selectedDefectFilter}
               onClearDefectFilter={() => setSelectedDefectFilter(null)}
               externalSearchTerm={searchTerm}
-              onOpenIntake={() => setIsAddModalOpen(true)}
+              onOpenIntake={() => setActiveTab('register')}
             />
 
             {/* Bottom 3-Card Analytics Row */}

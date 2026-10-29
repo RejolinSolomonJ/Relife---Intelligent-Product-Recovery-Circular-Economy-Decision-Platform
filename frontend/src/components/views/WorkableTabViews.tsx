@@ -44,14 +44,14 @@ export function WorkableTabViews({ onOpenIntake }: WorkableTabViewsProps) {
         </span>
       </div>
 
-      {/* CORE 7-STEP RECOVERY WIZARD (Intake, Vision, Tests, Cost, Decision, Review, Report) */}
+      {/* PRODUCT REGISTRATION (Vision-First: Camera Capture & Image Auto-Detection) */}
       {activeTab === 'register' && (
-        <RecoveryWizard />
+        <InspectionWorkbench isRegistrationMode={true} />
       )}
 
       {/* INSPECTIONS WORKBENCH (Live Camera Capture & Multi-Source Image Intake) */}
       {activeTab === 'inspections' && (
-        <InspectionWorkbench />
+        <InspectionWorkbench isRegistrationMode={false} />
       )}
 
       {/* RECOMMENDATIONS MATRIX */}
