@@ -271,3 +271,93 @@ class EnvironmentalRecord(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     return_item = relationship("ReturnItem", back_populates="environmental_records")
+
+
+# 14. E-Commerce Storefront Listings
+class ShopListing(Base):
+    __tablename__ = "shop_listings"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    product_id = Column(String(32), nullable=True)
+    return_id = Column(String(32), nullable=True)
+    title = Column(String(160), nullable=False)
+    category = Column(String(64), nullable=False, index=True)
+    brand = Column(String(64), nullable=False)
+    model = Column(String(128), nullable=False, index=True)
+    condition_grade = Column(String(32), nullable=False, default="Refurbished")  # Like New | Grade A | Grade B | Refurbished
+    price_inr = Column(Float, nullable=False)
+    original_msrp = Column(Float, default=0.0)
+    stock_quantity = Column(Integer, default=1)
+    available_quantity = Column(Integer, default=1)
+    image_url = Column(String(255), nullable=True)
+    description = Column(Text, nullable=True)
+    is_published = Column(Boolean, default=True)
+    auto_book_on_publish = Column(Boolean, default=True)
+    listing_type = Column(String(32), default="product")  # product | component
+    published_at = Column(DateTime, default=datetime.utcnow)
+
+    # Reverse auction support (Feature 2)
+    is_reverse_auction = Column(Boolean, default=False)
+    auction_start_price = Column(Float, default=0.0)
+    auction_floor_price = Column(Float, default=0.0)
+    auction_current_price = Column(Float, default=0.0)
+    auction_step_interval_min = Column(Integer, default=2)
+    auction_step_amount = Column(Float, default=150.0)
+    auction_started_at = Column(DateTime, nullable=True)
+
+    reservations = relationship("Reservation", back_populates="listing", cascade="all, delete-orphan")
+
+
+# 15. Buyer Pre-Enquiry / Waitlist
+class WaitlistEnquiry(Base):
+    __tablename__ = "waitlist_enquiries"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    buyer_name = Column(String(128), nullable=False)
+    buyer_email = Column(String(128), nullable=False)
+    buyer_type = Column(String(32), nullable=False, default="customer")  # customer | reseller
+    category = Column(String(64), nullable=False)
+    brand = Column(String(64), nullable=False)
+    model = Column(String(128), nullable=False, index=True)
+    min_condition_grade = Column(String(32), default="Refurbished")
+    max_budget_inr = Column(Float, nullable=False)
+    quantity_requested = Column(Integer, default=1)
+    status = Column(String(32), default="active", index=True)  # active | matched | fulfilled | cancelled
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    reservations = relationship("Reservation", back_populates="enquiry")
+
+
+# 16. Stock Reservations (24-Hour Hold)
+class Reservation(Base):
+    __tablename__ = "reservations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    listing_id = Column(Integer, ForeignKey("shop_listings.id"), nullable=False, index=True)
+    enquiry_id = Column(Integer, ForeignKey("waitlist_enquiries.id"), nullable=True, index=True)
+    buyer_name = Column(String(128), nullable=False)
+    buyer_email = Column(String(128), nullable=False)
+    buyer_type = Column(String(32), default="customer")
+    quantity_reserved = Column(Integer, default=1)
+    reserved_price_inr = Column(Float, nullable=False)
+    status = Column(String(32), default="pending", index=True)  # pending | confirmed | expired | released
+    expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    listing = relationship("ShopListing", back_populates="reservations")
+    enquiry = relationship("WaitlistEnquiry", back_populates="reservations")
+
+
+# 17. In-App Notifications
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_email = Column(String(128), nullable=False, index=True)
+    user_type = Column(String(32), default="buyer")  # buyer | retailer
+    title = Column(String(160), nullable=False)
+    message = Column(Text, nullable=False)
+    link_url = Column(String(255), nullable=True)
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
