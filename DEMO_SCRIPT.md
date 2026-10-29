@@ -120,3 +120,4 @@ This script walks through the **Canonical Laptop Scenario** demonstrating the co
 2. **Hard Safety Overrides**: Dangerous or damaged units (e.g. cracked display, battery < 70%) are strictly blocked from resale regardless of profit margin.
 3. **Multi-Criteria Sliders**: Balances corporate profit with ESG carbon diversion and turnaround velocity.
 4. **Digital Product Passport (DPP)**: Real-time generated scannable QR code linking to permanent circular recovery certificate.
+

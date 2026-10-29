@@ -4,17 +4,14 @@ import React, { useState } from 'react';
 import { KPIs } from '../../lib/types';
 import { formatINR } from '../../lib/formatters';
 import {
-  ArrowUpRight,
-  ScanLine,
+  Send,
   PlusCircle,
   Cpu,
   ArrowRightLeft,
-  CheckCircle,
+  QrCode,
   Eye,
   EyeOff,
-  Layers,
-  Sparkles,
-  Award,
+  Check,
 } from 'lucide-react';
 
 interface HeroBannerProps {
@@ -35,147 +32,159 @@ export function HeroBanner({
   onOpenTransfer,
 }: HeroBannerProps) {
   const [showBalance, setShowBalance] = useState<boolean>(true);
-  const valueRecovered = kpis?.value_recovered_inr || 1809550;
+  const valueRecovered = kpis?.value_recovered_inr || 1515517;
   const growthPct = kpis?.value_recovered_change_pct || 18.2;
 
   const quickActions = [
     {
-      label: 'Recovery Wizard',
+      label: 'Scan Product',
+      icon: Send,
+      iconColor: 'text-[#073E2E]',
+      circleBg: 'bg-[#DCFCE7] hover:bg-[#BBF7D0]',
+      action: onOpenIntake,
+    },
+    {
+      label: 'Add Return',
       icon: PlusCircle,
-      bg: 'bg-[#FFC21A]/20 border border-[#FFC21A]/40 text-[#FFC21A]',
+      iconColor: 'text-slate-800',
+      circleBg: 'bg-slate-100 hover:bg-slate-200',
       action: onOpenIntake,
     },
     {
-      label: 'Scan QR Passport',
-      icon: ScanLine,
-      bg: 'bg-[#22D3EE]/20 border border-[#22D3EE]/40 text-[#22D3EE]',
-      action: onOpenIntake,
-    },
-    {
-      label: 'Run AI Triage',
+      label: 'Run Triage',
       icon: Cpu,
-      bg: 'bg-[#F57C00]/20 border border-[#F57C00]/40 text-[#F57C00]',
+      iconColor: 'text-[#8B5CF6]',
+      circleBg: 'bg-[#F3E8FF] hover:bg-[#E9D5FF]',
       action: onRunTriage,
     },
     {
-      label: 'Decision Matrix',
+      label: 'Transfer',
       icon: ArrowRightLeft,
-      bg: 'bg-[#A855F7]/20 border border-[#A855F7]/40 text-[#A855F7]',
+      iconColor: 'text-[#0284C7]',
+      circleBg: 'bg-[#E0F2FE] hover:bg-[#BAE6FD]',
       action: onOpenTransfer,
     },
     {
       label: 'Review Queue',
-      icon: Layers,
-      bg: 'bg-red-500/20 border border-red-500/40 text-red-300',
+      icon: QrCode,
+      iconColor: 'text-[#EA580C]',
+      circleBg: 'bg-[#FFEDD5] hover:bg-[#FED7AA]',
       action: onOpenReviewQueue,
     },
   ];
 
   return (
     <div className="space-y-4">
-      {/* Dark Theme Hero Card */}
-      <div className="relative bg-gradient-to-br from-[#12131A] via-[#181926] to-[#12131A] rounded-3xl p-6 sm:p-7 text-white shadow-2xl border border-[#252836] overflow-hidden">
-        {/* Ambient Gold/Orange background glows */}
-        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-[#FFC21A]/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-[#F57C00]/10 blur-3xl pointer-events-none" />
+      {/* Finora Forest Green Hero Card */}
+      <div className="relative bg-gradient-to-br from-[#063F2F] via-[#074735] to-[#0A533E] rounded-[28px] p-6 sm:p-7 text-white shadow-[0_4px_20px_rgba(7,62,46,0.15)] overflow-hidden">
+        {/* Subtle decorative background blur orbs */}
+        <div className="absolute -top-12 -right-12 w-52 h-52 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-44 h-44 rounded-full bg-emerald-400/10 blur-2xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           {/* Left Text & Metrics */}
-          <div className="space-y-4 max-w-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-extrabold font-sans tracking-tight text-white flex items-center gap-2">
-                  <span>ReLife Circular Operations</span>
-                  <Sparkles className="w-5 h-5 text-[#FFC21A]" />
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
-                  AI-powered product recovery and multi-criteria circular disposition platform.
-                </p>
-              </div>
+          <div className="space-y-3.5 max-w-md">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-extrabold font-sans tracking-tight text-white flex items-center gap-2">
+                <span>Good Afternoon, Ayesha</span>
+                <span className="text-lg">☀️</span>
+              </h2>
+              <p className="text-xs text-emerald-100/90 font-medium leading-relaxed mt-1">
+                Circular recovery pipeline is performing at peak efficiency! Here&apos;s today&apos;s inventory overview.
+              </p>
             </div>
 
-            {/* Value Recovered Display */}
-            <div className="pt-2">
-              <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
+            {/* Total Balance / Recovered Value */}
+            <div className="pt-1 space-y-1">
+              <div className="flex items-center gap-2 text-xs text-emerald-200/80 font-medium">
                 <span>Total Value Recovered</span>
                 <button
                   type="button"
                   onClick={() => setShowBalance(!showBalance)}
-                  className="opacity-70 hover:opacity-100 transition-opacity"
-                  title={showBalance ? 'Hide Value' : 'Show Value'}
+                  className="hover:text-white transition-colors"
+                  aria-label="Toggle value visibility"
                 >
-                  {showBalance ? (
-                    <Eye className="w-3.5 h-3.5 text-slate-400" />
-                  ) : (
-                    <EyeOff className="w-3.5 h-3.5 text-slate-400" />
-                  )}
+                  {showBalance ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                 </button>
               </div>
 
-              <div className="flex items-baseline gap-3 mt-1">
-                <span className="text-3xl sm:text-4xl font-extrabold tracking-tight font-mono text-[#FFC21A]">
-                  {isLoading
-                    ? '...'
-                    : showBalance
-                    ? formatINR(valueRecovered, false)
-                    : '₹ ••••••••'}
-                </span>
+              <div className="text-3xl sm:text-4xl font-extrabold tracking-tight font-mono text-white">
+                {showBalance ? formatINR(valueRecovered) : '₹ •••••••'}
               </div>
 
-              <div className="flex items-center gap-2 mt-2">
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-950/80 border border-emerald-500/40 px-2.5 py-0.5 rounded-full">
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                  <span>+{growthPct}% vs. last month</span>
+              <div className="flex items-center gap-2 text-xs pt-0.5">
+                <span className="text-emerald-300 font-semibold flex items-center gap-0.5">
+                  ↑ {growthPct}% vs. last month
                 </span>
-                <span className="text-[11px] text-slate-400 font-mono">
-                  ({kpis?.total_returns || 52} returns cataloged)
+                <span className="text-emerald-200/70 text-[11px]">
+                  (52 products processed)
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Right: Status Pill & Passport Badge */}
-          <div className="flex flex-col items-end justify-between self-stretch">
-            {/* Top Operational Status Badge */}
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-400/40 text-emerald-300 text-xs font-semibold shadow-sm">
-              <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Pipeline Active</span>
+          {/* Right: Finora Wallet & Coin Graphic with Healthy Badge */}
+          <div className="hidden sm:flex flex-col items-end justify-center relative shrink-0">
+            {/* Healthy Pill Badge */}
+            <div className="mb-3 bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-xs px-3 py-1 rounded-full flex items-center gap-1.5 font-medium shadow-sm backdrop-blur-sm self-end">
+              <Check className="w-3.5 h-3.5 text-emerald-300 stroke-[3]" />
+              <span>Healthy</span>
             </div>
 
-            {/* Circular Recovery Card Graphic */}
-            <div className="relative mt-4 md:mt-0 flex items-center justify-center">
-              <div className="w-32 h-20 sm:w-36 sm:h-24 rounded-2xl bg-gradient-to-tr from-[#1E202E] to-[#252836] border border-[#FFC21A]/30 shadow-2xl flex items-center justify-center p-3">
-                <div className="w-full h-full rounded-xl bg-[#08080D] border border-[#252836] flex flex-col justify-between p-2">
-                  <div className="flex justify-between items-center">
-                    <div className="w-4 h-2.5 rounded bg-[#FFC21A]" />
-                    <span className="text-[9px] font-mono font-bold text-[#FFC21A]">ReLife AI</span>
-                  </div>
-                  <div className="text-[10px] font-mono text-slate-300 font-bold">
-                    PASSPORT 2026
-                  </div>
+            {/* Wallet & Cards Graphic */}
+            <div className="relative">
+              <div className="w-48 h-30 rounded-2xl bg-gradient-to-tr from-[#053526] to-[#0D6E50] border border-emerald-400/20 shadow-xl p-3.5 flex flex-col justify-between transform rotate-1 hover:rotate-0 transition-transform">
+                <div className="flex justify-between items-center">
+                  <div className="w-7 h-5 rounded bg-amber-400/90 shadow-inner" />
+                  <span className="text-[10px] font-mono text-emerald-200/90 uppercase tracking-widest font-bold">
+                    ReLife AI
+                  </span>
                 </div>
+                <div className="text-right">
+                  <span className="text-[11px] font-mono text-emerald-100 tracking-wider">
+                    •••• 2026
+                  </span>
+                </div>
+              </div>
+
+              {/* Floating Gold Coin Left */}
+              <div className="absolute -bottom-2 -left-3 w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-900 font-extrabold flex items-center justify-center text-xs shadow-lg border-2 border-[#073E2E]">
+                ₹
+              </div>
+
+              {/* Floating Gold Coin Right */}
+              <div className="absolute -top-1 -right-2 w-6 h-6 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-200 text-slate-900 font-extrabold flex items-center justify-center text-[10px] shadow-md border-2 border-[#073E2E]">
+                ₹
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Quick Action Navigation Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {quickActions.map((action, idx) => {
-          const Icon = action.icon;
-          return (
-            <button
-              key={idx}
-              type="button"
-              onClick={action.action}
-              className={`flex items-center justify-center gap-2 p-3 rounded-2xl ${action.bg} shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] font-bold text-xs`}
-            >
-              <Icon className="w-4 h-4 shrink-0" />
-              <span className="truncate">{action.label}</span>
-            </button>
-          );
-        })}
+      {/* Finora Unified White Quick Action Bar */}
+      <div className="bg-white border border-slate-200/80 rounded-[24px] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+        <div className="grid grid-cols-5 gap-2 sm:gap-4 items-center justify-items-center">
+          {quickActions.map((action, i) => {
+            const Icon = action.icon;
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={action.action}
+                className="flex flex-col items-center justify-center gap-2 group cursor-pointer w-full text-center"
+              >
+                <div
+                  className={`w-12 h-12 rounded-full ${action.circleBg} flex items-center justify-center shadow-sm group-hover:scale-105 transition-all duration-200`}
+                >
+                  <Icon className={`w-5 h-5 ${action.iconColor} transition-transform`} />
+                </div>
+                <span className="text-[11px] font-bold text-slate-700 group-hover:text-slate-900 leading-tight">
+                  {action.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

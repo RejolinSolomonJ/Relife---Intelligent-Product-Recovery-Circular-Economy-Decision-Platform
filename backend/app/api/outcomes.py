@@ -200,3 +200,4 @@ def record_outcome(payload: RecordOutcomeRequest, db: Session = Depends(get_db))
         revenue_variance_pct=round(rev_var, 1),
         cost_variance_pct=round(cost_var, 1)
     )
+

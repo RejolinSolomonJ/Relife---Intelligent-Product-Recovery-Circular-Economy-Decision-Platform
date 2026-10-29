@@ -8,18 +8,14 @@ import { ComponentCardItem, BuyerInfo } from '../../lib/types';
 import {
   ShoppingBag,
   Cpu,
-  Layers,
   Sparkles,
   CheckCircle2,
   Download,
-  Filter,
   ArrowUpRight,
   ShieldCheck,
   Building2,
   MapPin,
   RefreshCw,
-  Clock,
-  AlertCircle
 } from 'lucide-react';
 
 export function MarketplaceWorkbench() {
@@ -110,12 +106,12 @@ export function MarketplaceWorkbench() {
     <div className="space-y-6">
       {/* Toast Notification */}
       {actionMessage && (
-        <div className="p-3 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-200 text-xs flex items-center justify-between shadow-lg">
+        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>{actionMessage}</span>
+            <CheckCircle2 className="w-4 h-4 text-[#073E2E] shrink-0" />
+            <span className="font-semibold">{actionMessage}</span>
           </div>
-          <button onClick={() => setActionMessage(null)} className="text-emerald-400 hover:text-white font-bold ml-4">✕</button>
+          <button onClick={() => setActionMessage(null)} className="text-emerald-700 hover:text-emerald-950 font-bold ml-4">✕</button>
         </div>
       )}
 
@@ -123,10 +119,10 @@ export function MarketplaceWorkbench() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card title="Available Harvest Lots">
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold font-mono text-[#FFC21A]">{availableCount}</span>
-            <span className="text-[11px] text-slate-400 font-medium">lots listed</span>
+            <span className="text-3xl font-extrabold font-mono text-[#073E2E]">{availableCount}</span>
+            <span className="text-[11px] text-slate-500 font-medium">lots listed</span>
           </div>
-          <p className="text-[10px] text-emerald-400 mt-1 flex items-center gap-1">
+          <p className="text-[10px] text-emerald-700 mt-1 flex items-center gap-1 font-semibold">
             <Sparkles className="w-3 h-3" />
             <span>100% bench tested & paired</span>
           </p>
@@ -134,18 +130,18 @@ export function MarketplaceWorkbench() {
 
         <Card title="Matched B2B Pipeline Value">
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold font-mono text-emerald-400">{formatINR(totalDemandValue)}</span>
-            <span className="text-[11px] text-slate-400 font-medium font-mono">{transactedCount} sold</span>
+            <span className="text-3xl font-extrabold font-mono text-emerald-700">{formatINR(totalDemandValue)}</span>
+            <span className="text-[11px] text-slate-500 font-medium font-mono">{transactedCount} sold</span>
           </div>
-          <p className="text-[10px] text-slate-400 mt-1">Sample indicative partner bids</p>
+          <p className="text-[10px] text-slate-500 mt-1">Sample indicative partner bids</p>
         </Card>
 
         <Card title="Certified B2B Buyers">
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold font-mono text-cyan-400">{buyers.length || 4}</span>
-            <span className="text-[11px] text-slate-400 font-medium">active hubs</span>
+            <span className="text-3xl font-extrabold font-mono text-sky-700">{buyers.length || 4}</span>
+            <span className="text-[11px] text-slate-500 font-medium">active hubs</span>
           </div>
-          <p className="text-[10px] text-cyan-300 mt-1 flex items-center gap-1">
+          <p className="text-[10px] text-sky-700 mt-1 flex items-center gap-1 font-semibold">
             <Building2 className="w-3 h-3" />
             <span>Refurbishers & Repair Chains</span>
           </p>
@@ -153,10 +149,10 @@ export function MarketplaceWorkbench() {
 
         <Card title="Avg Partner Realization">
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold font-mono text-purple-400">93.8%</span>
-            <span className="text-[11px] text-slate-400 font-medium">of fair value</span>
+            <span className="text-3xl font-extrabold font-mono text-purple-700">93.8%</span>
+            <span className="text-[11px] text-slate-500 font-medium">of fair value</span>
           </div>
-          <p className="text-[10px] text-purple-300 mt-1 flex items-center gap-1">
+          <p className="text-[10px] text-purple-700 mt-1 flex items-center gap-1 font-semibold">
             <ShieldCheck className="w-3 h-3" />
             <span>Verified circular buyers only</span>
           </p>
@@ -171,7 +167,7 @@ export function MarketplaceWorkbench() {
             <button
               type="button"
               onClick={exportManifest}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1E202E] hover:bg-[#252836] text-[#FFC21A] border border-[#FFC21A]/30 text-xs font-semibold cursor-pointer transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#073E2E] border border-slate-200 text-xs font-semibold cursor-pointer transition-all"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Export B2B Manifest</span>
@@ -179,7 +175,7 @@ export function MarketplaceWorkbench() {
             <button
               type="button"
               onClick={loadMarketplace}
-              className="p-1.5 rounded-xl bg-[#1E202E] hover:bg-[#252836] text-slate-300 hover:text-white border border-[#252836] cursor-pointer"
+              className="p-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 cursor-pointer"
               title="Refresh"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -188,8 +184,8 @@ export function MarketplaceWorkbench() {
         }
       >
         {/* Filter Bar */}
-        <div className="pt-2 pb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[#1E202E]">
-          <div className="flex items-center gap-1 overflow-x-auto pb-1 text-xs">
+        <div className="pt-2 pb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
             <span className="text-slate-400 font-mono text-[10px] mr-1 uppercase">Component:</span>
             {[
               { id: 'all', label: 'All Lots' },
@@ -203,10 +199,10 @@ export function MarketplaceWorkbench() {
               <button
                 key={tab.id}
                 onClick={() => setSelectedType(tab.id)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
                   selectedType === tab.id
-                    ? 'bg-[#FFC21A] text-slate-950 font-bold'
-                    : 'bg-[#1E202E] text-slate-400 hover:text-white hover:bg-[#252836]'
+                    ? 'bg-[#073E2E] text-white shadow-sm'
+                    : 'bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200'
                 }`}
               >
                 {tab.label}
@@ -220,10 +216,10 @@ export function MarketplaceWorkbench() {
               <button
                 key={cond}
                 onClick={() => setSelectedCondition(cond)}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-all ${
+                className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all ${
                   selectedCondition === cond
-                    ? 'bg-amber-400/20 text-[#FFC21A] border border-[#FFC21A]/40'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-emerald-100 text-[#073E2E] font-bold'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 {cond === 'all' ? 'Any Grade' : cond}
@@ -235,7 +231,7 @@ export function MarketplaceWorkbench() {
         {/* Component Grid */}
         {isLoading ? (
           <div className="py-12 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
-            <RefreshCw className="w-4 h-4 animate-spin text-[#FFC21A]" />
+            <RefreshCw className="w-4 h-4 animate-spin text-[#073E2E]" />
             <span>Matching harvestable lots with circular buyer networks...</span>
           </div>
         ) : components.length === 0 ? (
@@ -249,28 +245,28 @@ export function MarketplaceWorkbench() {
                 key={comp.id}
                 className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
                   comp.is_harvested
-                    ? 'bg-[#0E0F14] border-[#1E202E] opacity-75'
-                    : 'bg-[#08080D] border-[#252836] hover:border-[#FFC21A]/50'
+                    ? 'bg-slate-50 border-slate-200 opacity-75'
+                    : 'bg-white border-slate-200 hover:border-[#073E2E]/40 hover:shadow-md'
                 }`}
               >
                 <div>
                   {/* Top Bar */}
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase font-mono tracking-wider flex items-center gap-1.5">
-                      <Cpu className="w-3 h-3 text-[#FFC21A]" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase font-mono tracking-wider flex items-center gap-1.5">
+                      <Cpu className="w-3 h-3 text-[#073E2E]" />
                       <span>{comp.component_type}</span>
                     </span>
 
                     <div className="flex items-center gap-1.5">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                         comp.condition === 'Grade A'
-                          ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/30'
-                          : 'bg-amber-950/80 text-amber-300 border-amber-500/30'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : 'bg-amber-50 text-amber-700 border-amber-200'
                       }`}>
                         {comp.condition}
                       </span>
                       {comp.is_harvested && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-950/80 text-purple-300 border border-purple-500/30">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
                           Transacted
                         </span>
                       )}
@@ -278,7 +274,7 @@ export function MarketplaceWorkbench() {
                   </div>
 
                   {/* Device Title */}
-                  <h4 className="text-sm font-bold text-white leading-snug line-clamp-1">
+                  <h4 className="text-sm font-bold text-slate-900 leading-snug line-clamp-1">
                     {comp.product_name}
                   </h4>
                   <p className="text-[11px] text-slate-400 mt-0.5 font-mono">
@@ -286,64 +282,64 @@ export function MarketplaceWorkbench() {
                   </p>
 
                   {/* Financials */}
-                  <div className="mt-3 p-2.5 rounded-xl bg-[#12131A] border border-[#1E202E] flex items-center justify-between">
+                  <div className="mt-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-medium">Estimated Value</span>
-                      <span className="text-xs font-mono font-bold text-slate-300">{formatINR(comp.estimated_value)}</span>
+                      <span className="text-[10px] text-slate-500 block font-medium">Estimated Value</span>
+                      <span className="text-xs font-mono font-bold text-slate-700">{formatINR(comp.estimated_value)}</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-emerald-400 block font-medium">Indicative B2B Bid</span>
-                      <span className="text-sm font-mono font-extrabold text-[#FFC21A]">{formatINR(comp.indicative_revenue)}</span>
+                      <span className="text-[10px] text-emerald-700 block font-medium">Indicative B2B Bid</span>
+                      <span className="text-sm font-mono font-extrabold text-[#073E2E]">{formatINR(comp.indicative_revenue)}</span>
                     </div>
                   </div>
 
                   {/* Matched Buyer Details */}
                   {comp.matched_buyer ? (
-                    <div className="mt-3 p-2.5 rounded-xl bg-[#161822] border border-[#252836] text-[11px] space-y-1">
+                    <div className="mt-3 p-2.5 rounded-xl bg-slate-50/80 border border-slate-200 text-[11px] space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] text-slate-400 uppercase font-mono font-bold">Top Matched Buyer</span>
-                        <span className="text-[10px] font-mono font-extrabold text-cyan-400">
+                        <span className="text-[10px] font-mono font-extrabold text-sky-700">
                           {comp.match_score}% Match
                         </span>
                       </div>
-                      <p className="font-bold text-slate-200">{comp.matched_buyer.name}</p>
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
+                      <p className="font-bold text-slate-800">{comp.matched_buyer.name}</p>
+                      <div className="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
                         <span className="flex items-center gap-1">
                           <MapPin className="w-2.5 h-2.5 text-slate-400" />
                           <span>{comp.matched_buyer.location}</span>
                         </span>
-                        <span className="text-amber-300 font-medium">
+                        <span className="text-emerald-700 font-semibold">
                           {comp.matched_buyer.demand_rating} Demand
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-3 p-2 rounded-xl bg-[#12131A] text-[10px] text-slate-400 text-center">
+                    <div className="mt-3 p-2 rounded-xl bg-slate-50 text-[10px] text-slate-400 text-center">
                       Searching regional partner network...
                     </div>
                   )}
 
-                  <p className="text-[9px] text-slate-500 italic mt-2">
-                    * Sample assumption based on prevailing secondary parts index.
+                  <p className="text-[9px] text-slate-400 italic mt-2">
+                    * Sample assumption based on secondary parts index.
                   </p>
                 </div>
 
                 {/* Action Button */}
-                <div className="pt-3 mt-3 border-t border-[#1E202E]">
+                <div className="pt-3 mt-3 border-t border-slate-100">
                   {comp.is_harvested ? (
                     <button
                       type="button"
                       disabled
-                      className="w-full py-1.5 rounded-xl bg-[#1E202E] text-slate-400 text-xs font-semibold cursor-not-allowed flex items-center justify-center gap-1.5"
+                      className="w-full py-2 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold cursor-not-allowed flex items-center justify-center gap-1.5"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-purple-400" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
                       <span>Transacted to Circular Partner</span>
                     </button>
                   ) : (
                     <button
                       type="button"
                       onClick={() => handleOpenAllocate(comp)}
-                      className="w-full py-2 rounded-xl bg-gradient-to-r from-[#FFC21A] to-[#F57C00] text-slate-950 font-bold text-xs shadow-md hover:brightness-110 active:scale-[0.99] cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                      className="w-full py-2 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold text-xs shadow-sm active:scale-[0.99] cursor-pointer transition-all flex items-center justify-center gap-1.5"
                     >
                       <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
                       <span>Allocate & Issue Order ({formatINR(comp.indicative_revenue)})</span>
@@ -358,39 +354,39 @@ export function MarketplaceWorkbench() {
 
       {/* Allocation Modal */}
       {selectedCompForModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="bg-[#12131A] border border-[#252836] rounded-2xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#252836]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white border border-slate-200 rounded-[24px] w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-[#FFC21A]" />
-                <h3 className="font-bold text-sm text-white">Allocate Harvested Sub-Assembly</h3>
+                <ShoppingBag className="w-5 h-5 text-[#073E2E]" />
+                <h3 className="font-bold text-sm text-slate-900">Allocate Harvested Sub-Assembly</h3>
               </div>
               <button
                 onClick={() => setSelectedCompForModal(null)}
-                className="text-slate-400 hover:text-white font-bold"
+                className="text-slate-400 hover:text-slate-600 font-bold"
               >
                 ✕
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="p-3 rounded-xl bg-[#08080D] border border-[#252836]">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                 <p className="text-[10px] text-slate-400 uppercase font-mono">Component Lot</p>
-                <p className="font-bold text-white text-sm mt-0.5">
+                <p className="font-bold text-slate-900 text-sm mt-0.5">
                   {selectedCompForModal.product_name} - {selectedCompForModal.component_type}
                 </p>
                 <div className="flex gap-4 mt-2 font-mono text-[11px]">
-                  <span>Condition: <strong className="text-emerald-400">{selectedCompForModal.condition}</strong></span>
-                  <span>Est Fair Value: <strong className="text-slate-300">{formatINR(selectedCompForModal.estimated_value)}</strong></span>
+                  <span>Condition: <strong className="text-emerald-700">{selectedCompForModal.condition}</strong></span>
+                  <span>Est Fair Value: <strong className="text-slate-800">{formatINR(selectedCompForModal.estimated_value)}</strong></span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Select Circular Buyer Partner</label>
+                <label className="block text-slate-700 font-bold mb-1">Select Circular Buyer Partner</label>
                 <select
                   value={allocationBuyerId || ''}
                   onChange={(e) => setAllocationBuyerId(Number(e.target.value))}
-                  className="w-full bg-[#08080D] border border-[#252836] rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[#FFC21A]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs outline-none focus:border-[#073E2E]"
                 >
                   {buyers.map(b => (
                     <option key={b.id} value={b.id}>
@@ -401,17 +397,17 @@ export function MarketplaceWorkbench() {
               </div>
 
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Technician Lot Release Notes</label>
+                <label className="block text-slate-700 font-bold mb-1">Technician Lot Release Notes</label>
                 <textarea
                   rows={2}
                   value={allocationNotes}
                   onChange={(e) => setAllocationNotes(e.target.value)}
-                  className="w-full bg-[#08080D] border border-[#252836] rounded-xl p-3 text-slate-200 text-xs outline-none focus:border-[#FFC21A]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 text-xs outline-none focus:border-[#073E2E]"
                   placeholder="Bench diagnostic details, serialization pairing..."
                 />
               </div>
 
-              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px]">
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-900 text-[11px]">
                 Upon confirmation, an electronic B2B Purchase Order will be generated, and the sub-assembly will be marked as Transacted in the closed-loop recovery audit ledger.
               </div>
             </div>
@@ -420,7 +416,7 @@ export function MarketplaceWorkbench() {
               <button
                 type="button"
                 onClick={() => setSelectedCompForModal(null)}
-                className="px-4 py-2 rounded-xl bg-[#1E202E] text-slate-300 hover:text-white text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold"
               >
                 Cancel
               </button>
@@ -428,7 +424,7 @@ export function MarketplaceWorkbench() {
                 type="button"
                 disabled={isAllocating}
                 onClick={handleConfirmAllocate}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FFC21A] to-[#F57C00] text-slate-950 font-bold text-xs shadow-md hover:brightness-110 active:scale-[0.99] transition-all flex items-center gap-1.5"
+                className="px-5 py-2 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
               >
                 {isAllocating ? (
                   <>

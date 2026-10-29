@@ -8,99 +8,87 @@ interface RecoveryRateGaugeProps {
   rate?: number;
 }
 
-export function RecoveryRateGauge({ rate = 71.2 }: RecoveryRateGaugeProps) {
+export function RecoveryRateGauge({ rate = 67.3 }: RecoveryRateGaugeProps) {
   const strokeDashoffset = 251.2 - (251.2 * rate) / 100;
+
+  const categories = [
+    { name: 'Smart Devices & Mobile', percentage: 74, color: '#10B981' },
+    { name: 'Computing & Consoles', percentage: 71, color: '#0284C7' },
+    { name: 'Audio & Wearables', percentage: 68, color: '#8B5CF6' },
+    { name: 'Home & Smart Appliances', percentage: 64, color: '#F59E0B' },
+  ];
 
   return (
     <Card
-      title="Circular Recovery Rate"
+      title="Circular Recovery Progress"
       action={
-        <button className="text-xs text-slate-400 hover:text-white font-medium flex items-center gap-0.5">
-          <span>Target: 75%</span>
+        <button className="text-xs text-slate-500 hover:text-slate-900 font-semibold flex items-center gap-0.5">
+          <span>View All</span>
+          <ChevronRight className="w-3.5 h-3.5" />
         </button>
       }
     >
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-5 py-1">
-        {/* Circular Progress Gauge */}
-        <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
-          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              className="text-[#1E202E]"
-              strokeWidth="9"
-              stroke="currentColor"
-              fill="transparent"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              className="text-[#FFC21A]"
-              strokeWidth="9"
-              strokeDasharray="251.2"
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              stroke="currentColor"
-              fill="transparent"
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-2xl font-extrabold text-white font-mono tracking-tight">
-              {rate}%
-            </span>
-            <span className="text-[9px] text-slate-400 font-mono uppercase tracking-wider">
-              Yield Rate
-            </span>
+      <div className="space-y-4 pt-1">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
+          {/* Circular Progress Gauge */}
+          <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
+            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                className="text-slate-100"
+                strokeWidth="10"
+                stroke="currentColor"
+                fill="transparent"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                className="text-[#073E2E]"
+                strokeWidth="10"
+                strokeDasharray="251.2"
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                stroke="currentColor"
+                fill="transparent"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <span className="text-2xl font-black text-slate-900 font-mono tracking-tight">
+                {rate}%
+              </span>
+              <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">
+                Overall Yield
+              </span>
+            </div>
+          </div>
+
+          {/* Category Breakdown */}
+          <div className="flex-1 w-full space-y-2 text-xs">
+            {categories.map((cat, i) => (
+              <div key={i} className="flex items-center justify-between py-0.5">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: cat.color }}
+                  />
+                  <span className="text-slate-700 font-medium text-xs">{cat.name}</span>
+                </div>
+                <span className="font-bold text-slate-900 font-mono text-xs">{cat.percentage}%</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Multi-Category Salvage Breakdown */}
-        <div className="flex-1 w-full space-y-2 text-xs">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#FFC21A]" />
-              <span className="text-slate-300 font-medium">Laptops & Ultrabooks</span>
-            </div>
-            <span className="font-bold text-white font-mono">74%</span>
+        {/* Motivational Callout Banner */}
+        <div className="p-3 rounded-2xl bg-[#E8F5E9] border border-emerald-100 flex items-center gap-2.5 text-xs text-emerald-900">
+          <div className="w-6 h-6 rounded-full bg-emerald-200 text-emerald-800 flex items-center justify-center shrink-0 text-xs font-bold">
+            🏆
           </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#22D3EE]" />
-              <span className="text-slate-300 font-medium">Smartphones & Tablets</span>
-            </div>
-            <span className="font-bold text-white font-mono">71%</span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#F57C00]" />
-              <span className="text-slate-300 font-medium">Components & Parts</span>
-            </div>
-            <span className="font-bold text-white font-mono">68%</span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-slate-300 font-medium">Certified Smelted</span>
-            </div>
-            <span className="font-bold text-white font-mono">64%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Callout */}
-      <div className="mt-4 p-3 rounded-2xl bg-[#08080D] border border-emerald-500/30 flex items-start gap-2.5">
-        <div className="p-1 rounded-lg bg-emerald-950/80 text-emerald-400 shrink-0 mt-0.5">
-          <Award className="w-3.5 h-3.5" />
-        </div>
-        <div>
-          <h5 className="text-xs font-bold text-emerald-300">Circular Milestone Achieved</h5>
-          <p className="text-[11px] text-slate-300 font-medium leading-tight mt-0.5">
-            You&apos;ve diverted {rate}% of all returned products across categories without landfill disposal.
+          <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
+            <strong>You&apos;re on track!</strong> You&apos;ve salvaged {rate}% of all returned products across categories without landfill disposal. Keep it up!
           </p>
         </div>
       </div>

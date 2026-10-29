@@ -67,7 +67,7 @@ class Inspection(Base):
     is_blurry = Column(Boolean, default=False)
     blur_score = Column(Float, default=120.0)  # Laplacian variance
     quality_flag = Column(String(32), default="Pass")  # Pass | Low Quality (Blurry)
-    model_version = Column(String(64), default="YOLOv8-ReLife-Simulated-v1.0")
+    model_version = Column(String(64), nullable=True)
     image_paths_json = Column(Text, nullable=True)
     notes = Column(Text, nullable=True)
     inspected_at = Column(DateTime, default=datetime.utcnow)
@@ -97,14 +97,6 @@ class Defect(Base):
     inspection = relationship("Inspection", back_populates="defects")
     return_item = relationship("ReturnItem", back_populates="defects")
 
-    @property
-    def category(self):
-        return self.defect_type
-
-    @category.setter
-    def category(self, val):
-        self.defect_type = val
-
 
 # 5. Functional Tests
 class FunctionalTest(Base):
@@ -124,8 +116,6 @@ class FunctionalTest(Base):
     has_unknown_test = Column(Boolean, default=False)
     tested_at = Column(DateTime, default=datetime.utcnow)
 
-    return_item = relationship("ReturnItem", back_populates="functional_tests")
-
     @property
     def condition_score(self):
         return self.overall_condition_score
@@ -133,6 +123,8 @@ class FunctionalTest(Base):
     @condition_score.setter
     def condition_score(self, val):
         self.overall_condition_score = val
+
+    return_item = relationship("ReturnItem", back_populates="functional_tests")
 
 
 # 6. Recovery Options (5-Pathway Engine Ranks)
@@ -241,23 +233,11 @@ class Recommendation(Base):
     required_tests = Column(String(255), nullable=True)
     generated_at = Column(DateTime, default=datetime.utcnow)
 
-    return_item = relationship("ReturnItem", back_populates="recommendations")
-
     @property
     def pathway(self):
         return self.selected_pathway
 
-    @pathway.setter
-    def pathway(self, val):
-        self.selected_pathway = val
-
-    @property
-    def confidence(self):
-        return self.confidence_overall
-
-    @confidence.setter
-    def confidence(self, val):
-        self.confidence_overall = val
+    return_item = relationship("ReturnItem", back_populates="recommendations")
 
 
 # 12. Actual Outcomes & Realization
@@ -269,21 +249,13 @@ class RecoveryOutcome(Base):
     actual_pathway = Column(String(32), nullable=False, index=True)
     actual_revenue = Column(Float, default=0.0)
     actual_cost = Column(Float, default=0.0)
-    refurbish_cost_inr = Column(Float, default=0.0)
+    actual_value_inr = Column(Float, default=0.0)
     actual_time_days = Column(Integer, default=2)
     waste_diverted_kg = Column(Float, default=0.0)
     notes = Column(Text, nullable=True)
     completed_at = Column(DateTime, default=datetime.utcnow)
 
     return_item = relationship("ReturnItem", back_populates="outcomes")
-
-    @property
-    def actual_value_inr(self):
-        return self.actual_revenue
-
-    @actual_value_inr.setter
-    def actual_value_inr(self, val):
-        self.actual_revenue = val
 
 
 # 13. Environmental & ESG Diverted Records

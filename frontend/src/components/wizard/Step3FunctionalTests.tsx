@@ -17,6 +17,7 @@ import {
   Usb,
   Power,
   CircuitBoard,
+  Sparkles,
 } from 'lucide-react';
 
 interface Step3Props {
@@ -37,38 +38,38 @@ interface TestItemConfig {
 const TESTS_CONFIG: TestItemConfig[] = [
   {
     key: 'powers_on',
-    label: 'Power Sequencing',
-    description: 'Boots through BIOS/EFI and responds to power button',
+    label: 'Power Sequencing / Fabric Integrity',
+    description: 'Electrical boot sequence or textile tensile structural integrity',
     icon: Power,
   },
   {
     key: 'display_ok',
-    label: 'Display & Backlight',
-    description: 'Internal panel renders clear image without lines or flicker',
+    label: 'Display / Surface Color Fastness',
+    description: 'Screen renders clean image or textile color exhibits no bleed/washout',
     icon: Monitor,
   },
   {
     key: 'motherboard_ok',
-    label: 'Motherboard & Logic Board',
-    description: 'Power rails, PMIC, and CPU voltages within factory tolerance',
+    label: 'Logic Board / Material Hygiene',
+    description: 'PMIC logic circuitry passes diagnostic or fabric is free of chemical contamination',
     icon: CircuitBoard,
   },
   {
     key: 'ram_ok',
-    label: 'System RAM',
-    description: 'Memory passes dual-channel diagnostic test',
+    label: 'System RAM / Warp-Weft Yarns',
+    description: 'System memory passes verification or textile structural threads are unbroken',
     icon: Cpu,
   },
   {
     key: 'storage_ok',
-    label: 'Solid State Storage',
-    description: 'NVMe / UFS SSD SMART health reports 0 bad sectors',
+    label: 'Solid State Storage / Lining',
+    description: 'NVMe SSD SMART health 0 bad sectors or internal garment lining intact',
     icon: HardDrive,
   },
   {
     key: 'ports_ok',
-    label: 'I/O Ports & Connectors',
-    description: 'USB-C, HDMI, audio jack, and charge pins communicate',
+    label: 'I/O Ports & Fasteners / Zippers',
+    description: 'USB-C/charge pins or zippers, sliders, and button fasteners operate smoothly',
     icon: Usb,
   },
 ];
@@ -80,7 +81,7 @@ export function Step3FunctionalTests({
 }: Step3Props) {
   const [testValues, setTestValues] = useState<Record<string, TestStatus>>({
     powers_on: 'pass',
-    display_ok: 'fail', // Default to display fail for the cracked laptop demo scenario
+    display_ok: 'fail', // Default to display fail for cracked laptop scenario
     battery_test: 'pass',
     motherboard_ok: 'pass',
     ram_ok: 'pass',
@@ -96,7 +97,9 @@ export function Step3FunctionalTests({
     setTestValues((prev) => ({ ...prev, [key]: val }));
   };
 
-  const handleQuickPreset = (preset: 'all_pass' | 'laptop_crack' | 'battery_dead' | 'has_unknowns') => {
+  const handleQuickPreset = (
+    preset: 'all_pass' | 'laptop_crack' | 'cloth_stained_tear' | 'battery_dead' | 'has_unknowns'
+  ) => {
     if (preset === 'all_pass') {
       setTestValues({
         powers_on: 'pass',
@@ -119,6 +122,17 @@ export function Step3FunctionalTests({
         ports_ok: 'pass',
       });
       setBatteryHealthPct(91);
+    } else if (preset === 'cloth_stained_tear') {
+      setTestValues({
+        powers_on: 'fail',   // Fabric structural integrity breached
+        display_ok: 'fail',  // Severe color stain
+        battery_test: 'fail',// Seam tensile failure
+        motherboard_ok: 'fail', // Irreversible hygiene contamination
+        ram_ok: 'pass',
+        storage_ok: 'pass',
+        ports_ok: 'pass',    // Buttons/zipper intact
+      });
+      setBatteryHealthPct(0);
     } else if (preset === 'battery_dead') {
       setTestValues({
         powers_on: 'pass',
@@ -166,7 +180,7 @@ export function Step3FunctionalTests({
         ram_ok: testValues.ram_ok,
         storage_ok: testValues.storage_ok,
         ports_ok: testValues.ports_ok,
-        notes: 'Bench technician diagnostic evaluation',
+        notes: 'Bench diagnostic verification completed.',
       };
 
       const res = await submitFunctionalTests(returnId, payload);
@@ -180,90 +194,111 @@ export function Step3FunctionalTests({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Honesty Notice */}
-      <div className="bg-[#181926] border border-amber-500/30 p-3.5 rounded-2xl flex items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2.5 text-amber-300">
-          <Info className="w-4 h-4 shrink-0 text-[#FFC21A]" />
+      <div className="bg-[#E8F5E9] border border-emerald-200 p-3.5 rounded-2xl flex items-center justify-between gap-3 text-xs text-slate-700">
+        <div className="flex items-center gap-2.5 text-emerald-900">
+          <Info className="w-4 h-4 shrink-0 text-[#073E2E]" />
           <span>
-            <strong>Mandatory Electrical Verification:</strong> Visual inspection alone cannot prove internal battery or motherboard state. Test inputs here directly calibrate pathway risk.
+            <strong>Bench Verification:</strong> Visual inspection alone cannot prove internal structural or electrical state. Testing parameters calibrate pathway risk.
           </span>
         </div>
-        <span className="px-2.5 py-0.5 rounded-md bg-[#252836] text-[10px] font-mono text-[#FFC21A] border border-[#FFC21A]/30 shrink-0">
+        <span className="px-2.5 py-0.5 rounded-full bg-white text-[11px] font-mono text-[#073E2E] border border-emerald-200 font-bold shrink-0">
           Step 3 of 7
         </span>
       </div>
 
       {/* Quick Presets */}
-      <div className="bg-[#12131A] border border-[#252836] p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs">
-        <span className="font-semibold text-slate-300">Preset Bench Findings:</span>
+      <div className="bg-white border border-slate-200/90 p-4 rounded-[24px] flex flex-wrap items-center justify-between gap-3 text-xs shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+        <span className="font-bold text-slate-800">Quick Diagnostic Presets:</span>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => handleQuickPreset('laptop_crack')}
-            className="px-2.5 py-1 rounded-lg bg-[#1E202E] hover:bg-[#252836] text-[#FFC21A] border border-[#FFC21A]/30 text-[11px]"
+            className="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-[#073E2E] text-xs font-bold transition-colors cursor-pointer"
           >
-            Display Damaged, Internals Pass (Demo Scenario)
+            Laptop: Cracked Screen (Demo)
+          </button>
+          <button
+            type="button"
+            onClick={() => handleQuickPreset('cloth_stained_tear')}
+            className="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-xs font-bold transition-colors cursor-pointer"
+          >
+            Clothing: Stained Dress / Torn (Recycle)
           </button>
           <button
             type="button"
             onClick={() => handleQuickPreset('battery_dead')}
-            className="px-2.5 py-1 rounded-lg bg-[#1E202E] hover:bg-[#252836] text-[#F57C00] border border-[#F57C00]/30 text-[11px]"
+            className="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-orange-800 text-xs font-bold transition-colors cursor-pointer"
           >
-            Failed Battery (Health &lt; 70%)
+            Failed Battery (&lt; 70%)
           </button>
           <button
             type="button"
             onClick={() => handleQuickPreset('all_pass')}
-            className="px-2.5 py-1 rounded-lg bg-[#1E202E] hover:bg-[#252836] text-emerald-400 border border-emerald-500/30 text-[11px]"
+            className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-bold transition-colors cursor-pointer"
           >
-            All Passed (Grade A)
+            All Passed (Resale)
           </button>
           <button
             type="button"
             onClick={() => handleQuickPreset('has_unknowns')}
-            className="px-2.5 py-1 rounded-lg bg-[#1E202E] hover:bg-[#252836] text-cyan-400 border border-cyan-500/30 text-[11px]"
+            className="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 text-xs font-bold transition-colors cursor-pointer"
           >
-            Unknown Tests (Triggers Human Review)
+            Unknown Tests (Human Review)
           </button>
         </div>
       </div>
 
       {hasUnknowns && (
-        <div className="p-3 bg-cyan-950/40 border border-cyan-500/40 rounded-xl text-cyan-300 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+        <div className="p-3.5 bg-sky-50 border border-sky-200 rounded-2xl text-sky-800 text-xs flex items-center gap-2.5">
+          <AlertTriangle className="w-4 h-4 shrink-0 text-sky-600" />
           <span>
-            <strong>Attention:</strong> One or more tests are marked as <strong>Unknown</strong>. This will reduce recommendation confidence and trigger routing to <strong>Human Technician Inspection</strong>.
+            <strong>Notice:</strong> One or more tests are marked as <strong>Unknown</strong>. This will lower recommendation confidence and automatically route the item to <strong>Human Technician Bench Review</strong>.
           </span>
         </div>
       )}
 
       {error && (
-        <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+        <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Battery Health Slider Card */}
-        <div className="bg-[#12131A] border border-[#252836] rounded-2xl p-5 shadow-xl">
-          <div className="flex items-center justify-between pb-3 border-b border-[#1E202E] mb-4">
+        <div className="bg-white border border-slate-200/90 rounded-[24px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
             <div className="flex items-center gap-2.5">
-              <BatteryCharging className="w-5 h-5 text-[#FFC21A]" />
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#073E2E] flex items-center justify-center">
+                <BatteryCharging className="w-4 h-4" />
+              </div>
               <div>
-                <h4 className="text-sm font-bold text-white">Battery Cycle & Health Analysis</h4>
+                <h4 className="text-sm font-bold text-slate-900">
+                  Power Storage / Battery Health Retention
+                </h4>
                 <p className="text-[11px] text-slate-400">
-                  Chemical capacity retention measured via gas gauge impedance
+                  Chemical retention capacity or textile seam retention percentage
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <span className={`text-sm font-bold font-mono ${batteryHealthPct >= 80 ? 'text-emerald-400' : batteryHealthPct >= 70 ? 'text-[#FFC21A]' : 'text-red-400'}`}>
-                {batteryHealthPct > 0 ? `${batteryHealthPct}% Capacity` : 'Unknown'}
+              <span
+                className={`text-sm font-bold font-mono ${
+                  batteryHealthPct >= 80
+                    ? 'text-emerald-700'
+                    : batteryHealthPct >= 70
+                    ? 'text-[#073E2E]'
+                    : 'text-rose-600'
+                }`}
+              >
+                {batteryHealthPct > 0 ? `${batteryHealthPct}% Capacity` : 'N/A / Non-Electric'}
               </span>
-              <p className="text-[10px] text-slate-500">
-                {batteryHealthPct < 70 && batteryHealthPct > 0 ? 'Safety threshold breached' : 'Pass standard'}
+              <p className="text-[10px] text-slate-400">
+                {batteryHealthPct < 70 && batteryHealthPct > 0
+                  ? 'Hazard threshold breached'
+                  : 'Certified range'}
               </p>
             </div>
           </div>
@@ -276,14 +311,14 @@ export function Step3FunctionalTests({
                 max={100}
                 value={batteryHealthPct}
                 onChange={(e) => setBatteryHealthPct(parseInt(e.target.value))}
-                className="flex-1 accent-[#FFC21A] bg-[#08080D] h-2 rounded-lg cursor-pointer"
+                className="flex-1 accent-[#073E2E] bg-slate-100 h-2 rounded-lg cursor-pointer"
               />
-              <span className="text-xs font-mono font-bold w-12 text-center text-white">
+              <span className="text-xs font-mono font-bold w-12 text-center text-slate-800">
                 {batteryHealthPct === -1 ? 'N/A' : `${batteryHealthPct}%`}
               </span>
             </div>
 
-            <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
               <span>Unknown (-1)</span>
               <span>Poor (&lt; 70% Overrides Resale)</span>
               <span>Acceptable (70-79%)</span>
@@ -301,28 +336,28 @@ export function Step3FunctionalTests({
             return (
               <div
                 key={t.key as string}
-                className="bg-[#12131A] border border-[#252836] rounded-2xl p-4 shadow-xl flex items-center justify-between gap-3"
+                className="bg-white border border-slate-200/90 rounded-[24px] p-4 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex items-center justify-between gap-3"
               >
                 <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-xl bg-[#08080D] border border-[#252836] text-[#FFC21A] shrink-0 mt-0.5">
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[#073E2E] shrink-0 mt-0.5">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div>
-                    <h5 className="text-xs font-bold text-white">{t.label}</h5>
+                    <h5 className="text-xs font-bold text-slate-900">{t.label}</h5>
                     <p className="text-[10px] text-slate-400 mt-0.5 max-w-[200px] leading-tight">
                       {t.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0 bg-[#08080D] p-1 rounded-xl border border-[#252836]">
+                <div className="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-2xl border border-slate-200">
                   <button
                     type="button"
                     onClick={() => setTest(t.key as string, 'pass')}
-                    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1 ${
+                    className={`px-2.5 py-1.5 rounded-xl text-[10px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
                       currentStatus === 'pass'
                         ? 'bg-emerald-600 text-white shadow-sm'
-                        : 'text-slate-400 hover:text-slate-200'
+                        : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
                     <CheckCircle2 className="w-3 h-3" />
@@ -332,10 +367,10 @@ export function Step3FunctionalTests({
                   <button
                     type="button"
                     onClick={() => setTest(t.key as string, 'fail')}
-                    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1 ${
+                    className={`px-2.5 py-1.5 rounded-xl text-[10px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
                       currentStatus === 'fail'
-                        ? 'bg-red-600 text-white shadow-sm'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-rose-600 text-white shadow-sm'
+                        : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
                     <XCircle className="w-3 h-3" />
@@ -345,10 +380,10 @@ export function Step3FunctionalTests({
                   <button
                     type="button"
                     onClick={() => setTest(t.key as string, 'unknown')}
-                    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1 ${
+                    className={`px-2.5 py-1.5 rounded-xl text-[10px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
                       currentStatus === 'unknown'
-                        ? 'bg-cyan-600 text-white shadow-sm'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-sky-600 text-white shadow-sm'
+                        : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
                     <HelpCircle className="w-3 h-3" />
@@ -363,14 +398,14 @@ export function Step3FunctionalTests({
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#FFC21A] to-[#F57C00] text-slate-950 font-bold text-xs tracking-wide shadow-lg hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          className="w-full py-4 rounded-2xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold text-xs tracking-wide shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
         >
           {isLoading ? (
-            <span>Computing Condition Health Score...</span>
+            <span>Computing Condition & Risk Calibration...</span>
           ) : (
             <>
-              <span>Save Bench Tests & Calculate Hardware Condition Score</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>Save Bench Tests & Evaluate 5 Circular Pathways</span>
+              <ArrowRight className="w-4 h-4 text-emerald-300" />
             </>
           )}
         </button>

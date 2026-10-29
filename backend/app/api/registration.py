@@ -123,3 +123,4 @@ def get_return_record(return_id: str, db: Session = Depends(get_db)):
         "qr_code_data_url": item.qr_code_data,
         "created_at": item.created_at.strftime("%Y-%m-%d %H:%M"),
     }
+

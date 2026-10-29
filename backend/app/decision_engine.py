@@ -42,12 +42,15 @@ def evaluate_five_pathways(
     w_risk = weights.get("risk", 15.0) / total_w
 
     cat_key = "Laptop" if "laptop" in category.lower() else "Smartphone"
+    is_apparel = any(k in category.lower() for k in ["cloth", "dress", "textile", "apparel", "garment", "fabric", "fashion", "linen", "cotton"]) or any(d.get("defect_type") in ["stain", "tear"] for d in defects)
 
     # Analyze defects
     has_crack = any(d.get("defect_type") == "crack" for d in defects)
     has_dent = any(d.get("defect_type") == "dent" for d in defects)
     has_scratch = any(d.get("defect_type") == "scratch" for d in defects)
     has_missing_part = any(d.get("defect_type") == "missing part" for d in defects)
+    has_stain = any(d.get("defect_type") == "stain" for d in defects)
+    has_tear = any(d.get("defect_type") == "tear" for d in defects)
     min_defect_conf = min([d.get("confidence", 90.0) for d in defects], default=90.0)
 
     # Analyze functional tests
@@ -119,7 +122,10 @@ def evaluate_five_pathways(
     # Safety & Quality Check for Resale
     resale_override = False
     resale_override_reason = None
-    if has_crack or display_ok == "fail":
+    if is_apparel and (has_stain or has_tear):
+        resale_override = True
+        resale_override_reason = "Fabric stain or structural tear violates pre-owned Grade A resale standards."
+    elif has_crack or display_ok == "fail":
         resale_override = True
         resale_override_reason = "Display damaged or cracked. Direct resale disqualified."
     elif battery_test == "fail" or (isinstance(battery_health, (int, float)) and battery_health > 0 and battery_health < 70):
@@ -159,7 +165,10 @@ def evaluate_five_pathways(
 
     repair_override = False
     repair_override_reason = None
-    if repair_total_cost > (product_msrp * 0.65):
+    if is_apparel and (has_stain or has_tear):
+        repair_override = True
+        repair_override_reason = "Restoration cost (specialized chemical stain stripping & re-weaving) exceeds pre-owned garment MSRP."
+    elif repair_total_cost > (product_msrp * 0.65):
         repair_override = True
         repair_override_reason = "Cumulative repair cost exceeds 65% of device MSRP (uneconomical repair)."
     elif motherboard_ok == "fail" and powers_on == "fail":
@@ -193,7 +202,10 @@ def evaluate_five_pathways(
 
     refurb_override = False
     refurb_override_reason = None
-    if refurb_total_cost > (product_msrp * 0.70):
+    if is_apparel and (has_stain or has_tear):
+        refurb_override = True
+        refurb_override_reason = "Extensive textile fiber contamination prevents commercial upcycling."
+    elif refurb_total_cost > (product_msrp * 0.70):
         refurb_override = True
         refurb_override_reason = "Refurbishment bill of materials exceeds secondary market realization."
 
@@ -223,7 +235,10 @@ def evaluate_five_pathways(
 
     harvest_override = False
     harvest_override_reason = None
-    if harvest_rev < 1500.0:
+    if is_apparel and (has_stain or has_tear):
+        harvest_override = True
+        harvest_override_reason = "Contaminated textile fabric; button/zipper component harvesting yields uneconomical return."
+    elif harvest_rev < 1500.0:
         harvest_override = True
         harvest_override_reason = "All major internal sub-assemblies defective or zero market yield."
 
@@ -243,13 +258,22 @@ def evaluate_five_pathways(
     # -------------------------------------------------------------
     # Pathway 5: Recycling
     # -------------------------------------------------------------
-    recycle_rev = product_weight_kg * 450.0  # ₹450 per kg in precious metals scrap
-    recycle_ops = PATHWAY_OPERATIONAL_COSTS["Recycling"]
-    recycle_total_cost = sum(recycle_ops.values())
-    recycle_nrv = recycle_rev - recycle_total_cost
-    recycle_time = 1  # 1 day
-    recycle_risk = 5.0
-    recycle_eco = 60.0
+    if is_apparel:
+        recycle_rev = max(450.0, product_weight_kg * 400.0 + 350.0)
+        recycle_ops = {"cleaning_cost": 50.0, "testing_cost": 40.0, "handling_cost": 60.0, "storage_cost": 30.0, "transport_cost": 50.0}
+        recycle_total_cost = sum(recycle_ops.values())
+        recycle_nrv = max(220.0, recycle_rev - recycle_total_cost)
+        recycle_time = 1  # 1 day
+        recycle_risk = 5.0
+        recycle_eco = 98.0  # 98% circular textile diversion
+    else:
+        recycle_rev = product_weight_kg * 450.0  # ₹450 per kg in precious metals scrap
+        recycle_ops = PATHWAY_OPERATIONAL_COSTS["Recycling"]
+        recycle_total_cost = sum(recycle_ops.values())
+        recycle_nrv = recycle_rev - recycle_total_cost
+        recycle_time = 1  # 1 day
+        recycle_risk = 5.0
+        recycle_eco = 60.0
 
     pathways_eval.append({
         "pathway": "Recycling",
@@ -341,9 +365,16 @@ def evaluate_five_pathways(
             f"Refurbishment is recommended for multi-surface wear. Complete re-casing and cycle renewal unlocks certified pre-owned value of ₹{winner['net_recovery_value']:,}."
         )
     else:
-        winner_rationale = (
-            "Recycling is recommended due to unrecoverable electrical faults and high parts cost. Certified smelting ensures zero hazardous landfill discharge."
-        )
+        if is_apparel:
+            winner_rationale = (
+                "Whole-Material Circular Textile Recycling is strongly recommended. The garment has severe stain/tear damage "
+                "rendering resale, repair, and refurbishment uneconomical. Diverting the entire material to mechanical fiber shredding "
+                "recovers circular spun yarn, preventing 100% of textile waste from landfills with an environmental score of 98/100."
+            )
+        else:
+            winner_rationale = (
+                "Recycling is recommended due to unrecoverable electrical faults and high parts cost. Certified smelting ensures zero hazardous landfill discharge."
+            )
 
     fallback_rationale = []
     for p in ranked_pathways[1:]:
@@ -381,3 +412,4 @@ def evaluate_five_pathways(
             "lifetime_extension_months": ENVIRONMENTAL_FACTORS["lifetime_extension_months"].get(winner_name, 12),
         }
     }
+

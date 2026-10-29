@@ -19,6 +19,12 @@ COMPONENT_VALUE_RATIOS = {
         "battery": 0.08,
         "storage": 0.10,
         "camera_module": 0.12,
+    },
+    "Clothing": {
+        "zipper_hardware": 0.05,
+        "buttons_fasteners": 0.03,
+        "lining_fabric": 0.06,
+        "main_textile": 0.20,
     }
 }
 
@@ -81,6 +87,12 @@ DEFECT_PART_COSTS = {
         "scratch": 800.0,        # Hydrogel buffing / back cover
         "missing part": 600.0,   # SIM tray / speaker mesh
         "battery fault": 2800.0, # High-capacity cell replacement
+    },
+    "Clothing": {
+        "stain": 1400.0,         # Specialized chemical stain removal
+        "tear": 1600.0,          # Precision re-weaving / seam tailoring
+        "scratch": 400.0,        # Surface fabric de-pilling
+        "missing part": 300.0,   # Button / zipper pull replacement
     }
 }
 
@@ -146,3 +158,4 @@ SEED_BUYERS = [
         "location": "Delhi NCR, India"
     }
 ]
+

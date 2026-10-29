@@ -58,64 +58,62 @@ export function RecentReturnsTable({
     }
   }, [externalSearchTerm]);
 
-  // Extract all unique categories dynamically from seeded data
   const availableCategories = useMemo(() => {
-    const set = new Set<string>();
+    const cats = new Set<string>();
     returns.forEach((r) => {
-      if (r.category) set.add(r.category);
+      if (r.category) cats.add(r.category);
     });
-    return Array.from(set).sort();
+    return Array.from(cats).sort();
   }, [returns]);
 
   const filteredData = useMemo(() => {
-    let result = [...returns];
+    return returns.filter((item) => {
+      if (pathwayFilter) {
+        const itemPathway = item.recommended_pathway.toLowerCase();
+        const targetPathway = pathwayFilter.toLowerCase();
+        if (!itemPathway.includes(targetPathway) && !targetPathway.includes(itemPathway)) {
+          return false;
+        }
+      }
 
-    // Global / local search
-    const activeQuery = (searchTerm || externalSearchTerm || '').trim().toLowerCase();
-    if (activeQuery) {
-      result = result.filter(
-        (item) =>
-          item.id.toLowerCase().includes(activeQuery) ||
-          item.brand_model.toLowerCase().includes(activeQuery) ||
-          item.defect_summary.toLowerCase().includes(activeQuery) ||
-          item.recommended_pathway.toLowerCase().includes(activeQuery) ||
-          item.category.toLowerCase().includes(activeQuery)
-      );
-    }
+      if (defectFilter) {
+        const itemDefect = item.defect_summary.toLowerCase();
+        const targetDefect = defectFilter.toLowerCase();
+        if (!itemDefect.includes(targetDefect) && !targetDefect.includes(itemDefect)) {
+          return false;
+        }
+      }
 
-    // Chart-based Pathway Filter
-    if (pathwayFilter) {
-      result = result.filter(
-        (item) =>
-          item.recommended_pathway.toLowerCase() === pathwayFilter.toLowerCase()
-      );
-    }
+      if (statusFilter !== 'all' && item.status !== statusFilter) {
+        return false;
+      }
 
-    // Chart-based Defect Filter
-    if (defectFilter) {
-      result = result.filter((item) =>
-        item.defect_summary.toLowerCase().includes(defectFilter.toLowerCase())
-      );
-    }
+      if (categoryFilter !== 'all' && item.category !== categoryFilter) {
+        return false;
+      }
 
-    if (statusFilter !== 'all') {
-      result = result.filter((item) => item.status === statusFilter);
-    }
+      if (searchTerm) {
+        const q = searchTerm.toLowerCase();
+        const matchId = item.id.toLowerCase().includes(q);
+        const matchModel = item.brand_model.toLowerCase().includes(q);
+        const matchDefect = item.defect_summary.toLowerCase().includes(q);
+        const matchPathway = item.recommended_pathway.toLowerCase().includes(q);
+        const matchCat = item.category.toLowerCase().includes(q);
+        if (!matchId && !matchModel && !matchDefect && !matchPathway && !matchCat) {
+          return false;
+        }
+      }
 
-    if (categoryFilter !== 'all') {
-      result = result.filter((item) => item.category === categoryFilter);
-    }
-
-    return result;
-  }, [returns, searchTerm, externalSearchTerm, pathwayFilter, defectFilter, statusFilter, categoryFilter]);
+      return true;
+    });
+  }, [returns, pathwayFilter, defectFilter, statusFilter, categoryFilter, searchTerm]);
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredData.slice(start, start + itemsPerPage);
+  }, [filteredData, currentPage, itemsPerPage]);
 
-  // Helper for brand badge letter/icon
   const getBrandInitial = (brandModel: string) => {
     const firstWord = brandModel.split(' ')[0] || 'D';
     return firstWord.slice(0, 2).toUpperCase();
@@ -128,23 +126,7 @@ export function RecentReturnsTable({
     if (s.includes('lenovo')) return 'bg-red-600 text-white';
     if (s.includes('samsung')) return 'bg-sky-600 text-white';
     if (s.includes('google')) return 'bg-amber-500 text-white';
-    if (s.includes('oneplus')) return 'bg-rose-600 text-white';
     if (s.includes('sony')) return 'bg-neutral-900 text-white';
-    if (s.includes('dyson')) return 'bg-purple-700 text-white';
-    if (s.includes('nintendo')) return 'bg-red-500 text-white';
-    if (s.includes('bose')) return 'bg-zinc-900 text-white';
-    if (s.includes('jbl')) return 'bg-orange-600 text-white';
-    if (s.includes('philips')) return 'bg-blue-800 text-white';
-    if (s.includes('roborock')) return 'bg-stone-800 text-white';
-    if (s.includes('breville')) return 'bg-amber-800 text-white';
-    if (s.includes('microsoft') || s.includes('xbox')) return 'bg-emerald-600 text-white';
-    if (s.includes('valve') || s.includes('steam')) return 'bg-slate-700 text-white';
-    if (s.includes('garmin')) return 'bg-cyan-700 text-white';
-    if (s.includes('lg')) return 'bg-rose-700 text-white';
-    if (s.includes('dji')) return 'bg-zinc-800 text-white';
-    if (s.includes('gopro')) return 'bg-sky-700 text-white';
-    if (s.includes('asus')) return 'bg-indigo-600 text-white';
-    if (s.includes('hp')) return 'bg-blue-700 text-white';
     return 'bg-[#073E2E] text-white';
   };
 
@@ -152,12 +134,12 @@ export function RecentReturnsTable({
     const cat = category.toLowerCase();
     if (cat.includes('laptop') || cat.includes('comput')) return Laptop;
     if (cat.includes('phone') || cat.includes('tablet')) return Smartphone;
-    if (cat.includes('audio') || cat.includes('sound') || cat.includes('headphone')) return Headphones;
-    if (cat.includes('gaming') || cat.includes('console')) return Gamepad2;
-    if (cat.includes('wearable') || cat.includes('watch')) return Watch;
-    if (cat.includes('monitor') || cat.includes('display')) return Tv;
-    if (cat.includes('camera') || cat.includes('drone')) return Camera;
-    if (cat.includes('appliance') || cat.includes('home')) return Home;
+    if (cat.includes('audio') || cat.includes('sound')) return Headphones;
+    if (cat.includes('gaming')) return Gamepad2;
+    if (cat.includes('wearable')) return Watch;
+    if (cat.includes('monitor')) return Tv;
+    if (cat.includes('camera')) return Camera;
+    if (cat.includes('appliance')) return Home;
     return Package;
   };
 
@@ -184,10 +166,7 @@ export function RecentReturnsTable({
           {pathwayFilter && (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium">
               Pathway: {pathwayFilter}
-              <button
-                onClick={onClearPathwayFilter}
-                className="hover:text-emerald-950"
-              >
+              <button onClick={onClearPathwayFilter} className="hover:text-emerald-950">
                 <X className="w-3 h-3" />
               </button>
             </span>
@@ -196,10 +175,7 @@ export function RecentReturnsTable({
           {defectFilter && (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
               Defect: {defectFilter}
-              <button
-                onClick={onClearDefectFilter}
-                className="hover:text-amber-950"
-              >
+              <button onClick={onClearDefectFilter} className="hover:text-amber-950">
                 <X className="w-3 h-3" />
               </button>
             </span>
@@ -208,10 +184,7 @@ export function RecentReturnsTable({
           {searchTerm && (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800 text-xs font-medium">
               Keyword: &quot;{searchTerm}&quot;
-              <button
-                onClick={() => setSearchTerm('')}
-                className="hover:text-slate-950"
-              >
+              <button onClick={() => setSearchTerm('')} className="hover:text-slate-950">
                 <X className="w-3 h-3" />
               </button>
             </span>
@@ -235,7 +208,7 @@ export function RecentReturnsTable({
       {/* Search & Filter Toolbar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
         <div className="relative w-full sm:w-80">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           <input
             type="text"
             value={searchTerm}
@@ -244,12 +217,12 @@ export function RecentReturnsTable({
               setCurrentPage(1);
             }}
             placeholder="Search products, ID, category, or defects..."
-            className="w-full pl-9 pr-8 py-1.5 bg-[#08080D] border border-[#252836] rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#FFC21A]"
+            className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#073E2E] focus:bg-white transition-all"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -263,7 +236,7 @@ export function RecentReturnsTable({
               setCategoryFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="bg-[#08080D] border border-[#252836] rounded-xl text-xs text-slate-300 py-1.5 px-2.5 focus:outline-none focus:border-[#FFC21A]"
+            className="bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 py-2 px-3 focus:outline-none focus:border-[#073E2E]"
           >
             <option value="all">All Product Categories</option>
             {availableCategories.map((cat) => (
@@ -279,7 +252,7 @@ export function RecentReturnsTable({
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="bg-[#08080D] border border-[#252836] rounded-xl text-xs text-slate-300 py-1.5 px-2.5 focus:outline-none focus:border-[#FFC21A]"
+            className="bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 py-2 px-3 focus:outline-none focus:border-[#073E2E]"
           >
             <option value="all">All Statuses</option>
             <option value="Recovered">Recovered</option>
@@ -292,14 +265,14 @@ export function RecentReturnsTable({
       {isLoading ? (
         <TableSkeleton />
       ) : filteredData.length === 0 ? (
-        <div className="py-12 text-center text-slate-500 text-xs">
+        <div className="py-12 text-center text-slate-400 text-xs">
           No return items matching active filters.
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="text-slate-400 uppercase tracking-wider font-semibold border-b border-[#1E202E] text-[10px] font-mono">
+              <tr className="text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-100 text-[10px] font-mono">
                 <th className="py-2.5 px-3">Date / ID</th>
                 <th className="py-2.5 px-3">Product Model</th>
                 <th className="py-2.5 px-3">Defect Summary</th>
@@ -308,22 +281,21 @@ export function RecentReturnsTable({
                 <th className="py-2.5 px-3 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E202E]">
+            <tbody className="divide-y divide-slate-100">
               {paginatedData.map((item) => {
                 const CategoryIcon = getCategoryIcon(item.category);
                 return (
                   <tr
                     key={item.id}
                     onClick={() => onSelectReturn && onSelectReturn(item)}
-                    className="hover:bg-[#181926] transition-colors cursor-pointer group"
-                    title="Click to view full return diagnostic report"
+                    className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
                   >
                     {/* Date & ID */}
                     <td className="py-3 px-3">
-                      <span className="font-mono font-bold text-white block text-xs group-hover:text-[#FFC21A] transition-colors">
+                      <span className="font-mono font-bold text-slate-900 block text-xs group-hover:text-[#073E2E] transition-colors">
                         {item.id}
                       </span>
-                      <span className="text-[10px] text-slate-500 font-mono">{item.received_date}</span>
+                      <span className="text-[10px] text-slate-400 font-mono">{item.received_date}</span>
                     </td>
 
                     {/* Brand & Model */}
@@ -337,11 +309,11 @@ export function RecentReturnsTable({
                           {getBrandInitial(item.brand_model)}
                         </div>
                         <div>
-                          <span className="font-bold text-white block text-xs group-hover:text-[#FFC21A] transition-colors">
+                          <span className="font-bold text-slate-900 block text-xs group-hover:text-[#073E2E] transition-colors">
                             {item.brand_model}
                           </span>
                           <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5">
-                            <CategoryIcon className="w-3 h-3 text-slate-500 shrink-0" />
+                            <CategoryIcon className="w-3 h-3 text-slate-400 shrink-0" />
                             <span>
                               {item.category} • SKU: {item.product_id}
                             </span>
@@ -350,9 +322,11 @@ export function RecentReturnsTable({
                       </div>
                     </td>
 
-                    {/* Defect Summary */}
-                    <td className="py-3 px-3 text-slate-600 max-w-xs truncate text-xs">
-                      {item.defect_summary}
+                    {/* Defect */}
+                    <td className="py-3 px-3">
+                      <span className="text-slate-600 block line-clamp-1 max-w-xs text-xs">
+                        {item.defect_summary}
+                      </span>
                     </td>
 
                     {/* Pathway */}
@@ -362,15 +336,15 @@ export function RecentReturnsTable({
 
                     {/* Confidence */}
                     <td className="py-3 px-3">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-12 bg-[#1E202E] h-1.5 rounded-full overflow-hidden">
+                      <div className="flex items-center gap-1.5 font-mono">
+                        <div className="w-12 bg-slate-100 h-1.5 rounded-full overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-[#FFC21A]"
+                            className="bg-[#073E2E] h-full rounded-full"
                             style={{ width: `${item.confidence}%` }}
                           />
                         </div>
-                        <span className="font-mono text-[11px] font-semibold text-slate-300">
-                          {item.confidence.toFixed(0)}%
+                        <span className="text-xs font-semibold text-slate-700">
+                          {item.confidence}%
                         </span>
                       </div>
                     </td>
@@ -388,33 +362,32 @@ export function RecentReturnsTable({
       )}
 
       {/* Pagination Controls */}
-      {!isLoading && filteredData.length > 0 && (
-        <div className="flex items-center justify-between pt-3 mt-1 border-t border-[#1E202E] text-xs text-slate-400">
-          <div>
-            Showing {(currentPage - 1) * itemsPerPage + 1} -{' '}
-            {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} items
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="p-1 rounded-lg hover:bg-[#1E202E] text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="font-semibold text-slate-200 px-2">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="p-1 rounded-lg hover:bg-[#1E202E] text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+      <div className="flex items-center justify-between pt-4 border-t border-slate-100 text-xs text-slate-500">
+        <span>
+          Showing {paginatedData.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to{' '}
+          {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} returns
+        </span>
+
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="px-2 py-0.5 font-mono font-bold text-slate-800">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="p-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
-      )}
+      </div>
     </Card>
   );
 }

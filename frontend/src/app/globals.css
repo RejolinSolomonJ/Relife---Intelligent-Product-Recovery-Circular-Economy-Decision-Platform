@@ -5,11 +5,12 @@
 @tailwind utilities;
 
 :root {
-  --background: #08080D;
-  --foreground: #F8FAFC;
-  --primary: #FFC21A;
-  --card-bg: #12131A;
-  --border-color: #252836;
+  --background: #F4F7F5;
+  --foreground: #0F172A;
+  --primary: #073E2E;
+  --primary-mint: #10B981;
+  --card-bg: #FFFFFF;
+  --border-color: #E2E8F0;
 }
 
 body {
@@ -20,23 +21,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dark Scrollbar */
+/* Crisp Clean Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #08080D;
+  background: #F4F7F5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #252836;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FFC21A;
+  background: #94A3B8;
 }
 
 /* Focus outline */
@@ -44,39 +45,28 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #FFC21A;
+  outline: 2px solid #073E2E;
   outline-offset: 2px;
 }
 
-/* Recharts Dark Theme Tooltips */
+/* Recharts Light Theme Tooltips */
 .recharts-default-tooltip {
-  background-color: #08080D !important;
-  border: 1px solid #252836 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.5) !important;
-  color: #F8FAFC !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.08) !important;
+  color: #0F172A !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 .recharts-tooltip-label {
-  color: #FFC21A !important;
+  color: #073E2E !important;
   font-weight: 700 !important;
   margin-bottom: 4px !important;
   font-size: 12px !important;
 }
 
 .recharts-legend-item-text {
-  color: #94A3B8 !important;
+  color: #475569 !important;
   font-size: 11px !important;
-}
-
-/* Clean Print to PDF styles */
-@media print {
-  body {
-    background-color: #FFFFFF !important;
-    color: #000000 !important;
-  }
-  aside, header, nav, button {
-    display: none !important;
-  }
 }

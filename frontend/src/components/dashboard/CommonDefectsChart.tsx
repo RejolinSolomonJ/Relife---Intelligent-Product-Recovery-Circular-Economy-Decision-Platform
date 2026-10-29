@@ -23,11 +23,11 @@ const DEFECT_CONFIG: Record<
   string,
   { color: string; bg: string; icon: React.ElementType }
 > = {
-  'Battery fault': { color: 'text-[#F57C00]', bg: 'bg-[#F57C00]/20 border border-[#F57C00]/30', icon: BatteryWarning },
-  Crack: { color: 'text-red-400', bg: 'bg-red-950/60 border border-red-500/30', icon: ShieldAlert },
-  Scratch: { color: 'text-[#FFC21A]', bg: 'bg-[#FFC21A]/20 border border-[#FFC21A]/30', icon: Sparkles },
-  Dent: { color: 'text-cyan-400', bg: 'bg-cyan-950/60 border border-cyan-500/30', icon: Cpu },
-  'Missing part': { color: 'text-purple-400', bg: 'bg-purple-950/60 border border-purple-500/30', icon: PackageX },
+  'Battery fault': { color: 'text-amber-700', bg: 'bg-amber-50 border border-amber-200', icon: BatteryWarning },
+  Crack: { color: 'text-rose-700', bg: 'bg-rose-50 border border-rose-200', icon: ShieldAlert },
+  Scratch: { color: 'text-emerald-700', bg: 'bg-emerald-50 border border-emerald-200', icon: Sparkles },
+  Dent: { color: 'text-sky-700', bg: 'bg-sky-50 border border-sky-200', icon: Cpu },
+  'Missing part': { color: 'text-purple-700', bg: 'bg-purple-50 border border-purple-200', icon: PackageX },
 };
 
 export function CommonDefectsChart({
@@ -57,52 +57,46 @@ export function CommonDefectsChart({
       <div className="space-y-3.5 py-1">
         {data.map((item) => {
           const cfg = DEFECT_CONFIG[item.category] || {
-            color: 'text-slate-300',
-            bg: 'bg-[#1E202E]',
-            icon: Sparkles,
+            color: 'text-slate-700',
+            bg: 'bg-slate-100 border border-slate-200',
+            icon: Cpu,
           };
           const Icon = cfg.icon;
-          const isSelected =
-            selectedDefect?.toLowerCase() === item.category.toLowerCase();
+          const isSelected = selectedDefect?.toLowerCase() === item.category.toLowerCase();
 
           return (
             <div
               key={item.category}
               onClick={() => onSelectDefect && onSelectDefect(item.category)}
-              className={`p-2 rounded-xl cursor-pointer transition-colors ${
-                isSelected
-                  ? 'bg-[#1E202E] border border-[#FFC21A]/50 text-white'
-                  : 'hover:bg-[#181926] text-slate-300'
+              className={`p-2.5 rounded-2xl transition-all cursor-pointer ${
+                isSelected ? 'bg-emerald-50 ring-1 ring-[#073E2E]' : 'hover:bg-slate-50'
               }`}
             >
-              <div className="flex items-center justify-between text-xs mb-1.5">
+              <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2.5">
-                  <div className={`p-1.5 rounded-lg ${cfg.bg} ${cfg.color} shrink-0`}>
-                    <Icon className="w-3.5 h-3.5" />
+                  <div className={`p-1.5 rounded-xl ${cfg.bg} ${cfg.color} shrink-0`}>
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <span
-                    className={`font-sans ${
-                      isSelected
-                        ? 'font-bold text-[#FFC21A]'
-                        : 'font-semibold text-white'
-                    }`}
-                  >
-                    {item.category}
-                  </span>
+                  <div>
+                    <span className="font-bold text-slate-800 text-xs block">
+                      {item.category}
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      {item.count} items recorded
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 font-mono">
-                  <span className="text-slate-400 text-[11px]">{item.percentage}%</span>
-                  <span className="text-white font-bold text-[11px] min-w-[36px] text-right">
-                    {item.count} units
-                  </span>
-                </div>
+
+                <span className="font-bold font-mono text-slate-700 text-xs">
+                  {item.percentage}%
+                </span>
               </div>
 
-              {/* Progress bar */}
-              <div className="w-full bg-[#1E202E] h-1.5 rounded-full overflow-hidden">
+              {/* Progress Bar */}
+              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-[#FFC21A] transition-all duration-500"
-                  style={{ width: `${Math.min(100, item.percentage * 2)}%` }}
+                  className="bg-[#073E2E] h-full rounded-full transition-all duration-300"
+                  style={{ width: `${item.percentage}%` }}
                 />
               </div>
             </div>

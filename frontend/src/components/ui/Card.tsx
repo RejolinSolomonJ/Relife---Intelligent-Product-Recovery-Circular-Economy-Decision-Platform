@@ -17,13 +17,13 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`bg-[#12131A] border border-[#252836] rounded-2xl p-5 sm:p-6 shadow-xl hover:border-slate-700 transition-all duration-200 flex flex-col justify-between text-white ${className}`}
+      className={`bg-white border border-slate-200/80 rounded-[24px] p-5 sm:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all duration-200 flex flex-col justify-between text-slate-800 ${className}`}
     >
       {(title || subtitle || action) && (
         <div className="flex items-center justify-between gap-3 mb-4 shrink-0">
           <div>
             {title && (
-              <h3 className="text-sm sm:text-base font-bold text-white tracking-tight font-sans">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight font-sans">
                 {title}
               </h3>
             )}

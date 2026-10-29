@@ -76,7 +76,6 @@ export function RecoveryWizard() {
 
   const handleDecisionComplete = (data: EvaluateDecisionResponse) => {
     setDecisionData(data);
-    // If human review required, go to step 6, otherwise step 7
     if (data.human_review_required) {
       setCurrentStep(6);
     } else {
@@ -90,37 +89,55 @@ export function RecoveryWizard() {
 
   return (
     <div className="space-y-6">
-      {/* Top Stepper Navigation Header */}
-      <div className="bg-[#12131A] border border-[#252836] p-4 rounded-2xl shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#1E202E]">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FFC21A] animate-pulse" />
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
-              ReLife AI • End-to-End Recovery Flow
-            </h2>
+      {/* 2-Minute Hackathon Demo Banner */}
+      <div className="p-4 rounded-2xl bg-[#E8F5E9] border border-emerald-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-emerald-200 text-[#073E2E] flex items-center justify-center font-bold shrink-0">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div>
+            <span className="font-bold text-slate-900 block text-xs">
+              2-Minute Fast-Track Demo Scenario (Laptop Cracked Screen)
+            </span>
+            <span className="text-slate-600 text-[11px]">
+              Preset MacBook Pro 14 return with cracked display panel, passing battery and motherboard tests.
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleLoadDemoScenario}
+          className="px-4 py-2 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold text-xs shadow-sm transition-all shrink-0 cursor-pointer"
+        >
+          Load Laptop Demo Scenario
+        </button>
+      </div>
+
+      {/* Top Stepper Container */}
+      <div className="p-6 rounded-[24px] bg-white border border-slate-200/80 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+          <div>
+            <h3 className="text-base font-bold text-slate-900">
+              Circular Product Recovery Pipeline
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Active Evaluation ID: <span className="font-mono font-bold text-[#073E2E]">{returnId}</span>
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={handleLoadDemoScenario}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E202E] hover:bg-[#252836] text-[#FFC21A] border border-[#FFC21A]/30 text-xs font-semibold transition-all"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Load Laptop Demo Scenario</span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => {
                 setCurrentStep(1);
-                setReturnId('');
+                setReturnId('REL-DEMO-001');
                 setRegisteredData(null);
                 setInspectionData(null);
                 setTestsData(null);
                 setDecisionData(null);
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E202E] hover:bg-[#252836] text-slate-400 hover:text-white border border-[#252836] text-xs font-semibold transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 text-xs font-semibold transition-all"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset</span>
@@ -129,7 +146,7 @@ export function RecoveryWizard() {
         </div>
 
         {/* Stepper Steps Progress Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 pt-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 pt-1">
           {STEPS.map((step) => {
             const Icon = step.icon;
             const isActive = currentStep === step.id;
@@ -140,17 +157,17 @@ export function RecoveryWizard() {
                 key={step.id}
                 type="button"
                 onClick={() => setCurrentStep(step.id)}
-                className={`p-2.5 rounded-xl text-left border transition-all flex flex-col justify-between ${
+                className={`p-2.5 rounded-2xl text-left border transition-all flex flex-col justify-between ${
                   isActive
-                    ? 'bg-[#1E202E] border-[#FFC21A] text-white shadow-lg ring-1 ring-[#FFC21A]/40'
+                    ? 'bg-[#073E2E] border-[#073E2E] text-white shadow-md'
                     : isCompleted
-                    ? 'bg-[#08080D] border-emerald-500/40 text-emerald-300'
-                    : 'bg-[#08080D] border-[#252836] text-slate-500 hover:text-slate-300'
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-900 font-semibold'
+                    : 'bg-slate-50 border-slate-200/80 text-slate-500 hover:text-slate-800'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-mono font-bold">0{step.id}</span>
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#FFC21A]' : isCompleted ? 'text-emerald-400' : 'text-slate-500'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : isCompleted ? 'text-[#073E2E]' : 'text-slate-400'}`} />
                 </div>
                 <div className="text-[11px] font-bold truncate">{step.name}</div>
               </button>
@@ -213,29 +230,29 @@ export function RecoveryWizard() {
       </div>
 
       {/* Bottom Step Pagination Controls */}
-      <div className="flex items-center justify-between pt-4 border-t border-[#252836] text-xs">
+      <div className="flex items-center justify-between pt-4 border-t border-slate-200 text-xs">
         <button
           type="button"
           disabled={currentStep === 1}
           onClick={() => setCurrentStep((prev) => Math.max(1, prev - 1))}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#12131A] hover:bg-[#1E202E] text-slate-300 border border-[#252836] font-semibold transition-all disabled:opacity-40 cursor-pointer"
+          className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 font-semibold flex items-center gap-1.5 shadow-sm"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-3.5 h-3.5" />
           <span>Previous Step</span>
         </button>
 
-        <span className="text-slate-500 font-mono text-[11px]">
-          Step {currentStep} of 7 • ReLife Intelligent Recovery
+        <span className="font-mono text-slate-400 text-xs font-semibold">
+          Step {currentStep} of {STEPS.length}
         </span>
 
         <button
           type="button"
-          disabled={currentStep === 7}
-          onClick={() => setCurrentStep((prev) => Math.min(7, prev + 1))}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#12131A] hover:bg-[#1E202E] text-[#FFC21A] border border-[#FFC21A]/30 font-semibold transition-all disabled:opacity-40 cursor-pointer"
+          disabled={currentStep === STEPS.length}
+          onClick={() => setCurrentStep((prev) => Math.min(STEPS.length, prev + 1))}
+          className="px-4 py-2 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold flex items-center gap-1.5 shadow-sm disabled:opacity-40"
         >
           <span>Next Step</span>
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>

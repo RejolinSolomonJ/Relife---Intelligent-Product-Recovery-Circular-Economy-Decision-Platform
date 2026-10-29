@@ -208,3 +208,4 @@ def allocate_component(payload: AllocateComponentRequest, db: Session = Depends(
         "realized_value_inr": transacted_amount,
         "message": f"Successfully allocated {comp.component_type} to {buyer.name} for {transacted_amount} INR."
     }
+

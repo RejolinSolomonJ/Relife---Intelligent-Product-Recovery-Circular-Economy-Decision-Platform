@@ -92,7 +92,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex-1 min-h-screen bg-[#08080D] text-slate-100 flex flex-col font-sans">
+    <div className="flex-1 min-h-screen bg-[#F4F7F5] text-slate-800 flex flex-col font-sans">
       {/* Top Navigation Bar with Search, Profile & Date Filter */}
       <Header
         dateRange={dateRange}
@@ -104,8 +104,8 @@ export default function DashboardPage() {
 
       {/* Floating Action Toast */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#12131A] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-in slide-in-from-bottom-3 duration-200 border border-[#FFC21A]/50">
-          <CheckCircle2 className="w-4 h-4 text-[#FFC21A] shrink-0" />
+        <div className="fixed bottom-6 right-6 z-50 bg-[#073E2E] text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-semibold animate-in slide-in-from-bottom-3 duration-200 border border-emerald-500/40">
+          <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -114,16 +114,16 @@ export default function DashboardPage() {
       <main className="flex-1 p-5 sm:p-6 lg:p-7 max-w-[1800px] w-full mx-auto space-y-6">
         {/* Error notification banner if backend is unreachable */}
         {error && (
-          <div className="p-4 rounded-2xl bg-red-950/40 border border-red-500/40 text-red-300 flex items-center justify-between gap-4 shadow-sm">
+          <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 flex items-center justify-between gap-4 shadow-sm">
             <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+              <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
               <div className="text-xs">
                 <span className="font-bold">Connection Notice:</span> {error}
               </div>
             </div>
             <button
               onClick={() => loadData(dateRange)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1E202E] border border-red-500/40 text-xs font-semibold text-red-300 hover:bg-[#252836] transition-colors shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-red-200 text-xs font-semibold text-red-700 hover:bg-red-50 transition-colors shadow-sm"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Retry
@@ -136,60 +136,83 @@ export default function DashboardPage() {
           <WorkableTabViews onOpenIntake={() => setIsAddModalOpen(true)} />
         ) : (
           /* 3-Column Finora Executive Dashboard Layout */
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: Hero Banner + Monthly Bar Chart + Recent Returns Table */}
-            <div className="lg:col-span-12 xl:col-span-5 space-y-6 flex flex-col">
-              {/* Interactive Hero Card with Quick Action Buttons */}
-              <HeroBanner
-                kpis={data?.kpis || null}
-                isLoading={isLoading}
-                onOpenIntake={() => setIsAddModalOpen(true)}
-                onRunTriage={handleRunTriage}
-                onOpenReviewQueue={handleOpenReviewQueue}
-                onOpenTransfer={() => setActiveTab('recommendations')}
-              />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column: Hero Banner + Monthly Bar Chart */}
+              <div className="lg:col-span-12 xl:col-span-5 space-y-6 flex flex-col">
+                {/* Interactive Finora Hero Card with Quick Action Buttons */}
+                <HeroBanner
+                  kpis={data?.kpis || null}
+                  isLoading={isLoading}
+                  onOpenIntake={() => setIsAddModalOpen(true)}
+                  onRunTriage={handleRunTriage}
+                  onOpenReviewQueue={handleOpenReviewQueue}
+                  onOpenTransfer={() => setActiveTab('recommendations')}
+                />
 
-              {/* Monthly Recovery Velocity */}
-              <ValueOverTimeChart
-                data={data?.value_over_time || []}
-                isLoading={isLoading}
-              />
+                {/* Monthly Recovery Velocity */}
+                <ValueOverTimeChart
+                  data={data?.value_over_time || []}
+                  isLoading={isLoading}
+                />
+              </div>
 
-              {/* Recent Returns Table with Row Click, Search & Chart Filters */}
-              <RecentReturnsTable
-                returns={data?.recent_returns || []}
-                isLoading={isLoading}
-                onSelectReturn={(item) => setSelectedReturn(item)}
-                pathwayFilter={selectedPathwayFilter}
-                onClearPathwayFilter={() => setSelectedPathwayFilter(null)}
-                defectFilter={selectedDefectFilter}
-                onClearDefectFilter={() => setSelectedDefectFilter(null)}
-                externalSearchTerm={searchTerm}
-                onOpenIntake={() => setIsAddModalOpen(true)}
-              />
+              {/* Middle Analytics Column: Recovery Overview Donut + Circular Progress */}
+              <div className="lg:col-span-6 xl:col-span-4 space-y-6 flex flex-col">
+                {/* Recovery Overview Donut Chart */}
+                <PathwayDistributionChart
+                  data={data?.pathway_distribution || []}
+                  totalValue={data?.kpis?.value_recovered_inr || 1515517}
+                  isLoading={isLoading}
+                  selectedPathway={selectedPathwayFilter}
+                  onSelectPathway={(pw) => {
+                    setSelectedPathwayFilter(
+                      selectedPathwayFilter === pw ? null : pw
+                    );
+                  }}
+                />
+
+                {/* Circular Recovery Rate Progress Gauge with Yield % & Callout */}
+                <RecoveryRateGauge
+                  rate={data?.kpis?.recovery_rate_pct || 67.3}
+                />
+              </div>
+
+              {/* Right Insights Column: E-Waste Diverted + Upcoming Inspections */}
+              <div className="lg:col-span-6 xl:col-span-3 space-y-6 flex flex-col">
+                {/* E-Waste Diverted Card */}
+                <EcoImpactCard
+                  wasteDivertedKg={data?.kpis?.waste_diverted_kg || 63.7}
+                  onExplore={() => setActiveTab('recommendations')}
+                />
+
+                {/* Upcoming Inspections List */}
+                <div id="review-queue-card">
+                  <HumanReviewQueue
+                    queue={data?.human_review_queue || []}
+                    isLoading={isLoading}
+                    onResolveItem={(item) => setSelectedReviewItem(item)}
+                    onViewAll={() => setActiveTab('inspections')}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Middle Analytics Column: Donut + Progress Gauge + Top Defect Modes */}
-            <div className="lg:col-span-6 xl:col-span-4 space-y-6 flex flex-col">
-              {/* Donut Chart with Click-to-Filter on Pathways */}
-              <PathwayDistributionChart
-                data={data?.pathway_distribution || []}
-                totalValue={data?.kpis?.value_recovered_inr || 1809550}
-                isLoading={isLoading}
-                selectedPathway={selectedPathwayFilter}
-                onSelectPathway={(pw) => {
-                  setSelectedPathwayFilter(
-                    selectedPathwayFilter === pw ? null : pw
-                  );
-                }}
-              />
+            {/* Lower Section: Recent Returns Triage (Full Width) */}
+            <RecentReturnsTable
+              returns={data?.recent_returns || []}
+              isLoading={isLoading}
+              onSelectReturn={(item) => setSelectedReturn(item)}
+              pathwayFilter={selectedPathwayFilter}
+              onClearPathwayFilter={() => setSelectedPathwayFilter(null)}
+              defectFilter={selectedDefectFilter}
+              onClearDefectFilter={() => setSelectedDefectFilter(null)}
+              externalSearchTerm={searchTerm}
+              onOpenIntake={() => setIsAddModalOpen(true)}
+            />
 
-              {/* Circular Recovery Rate Progress Gauge */}
-              <RecoveryRateGauge
-                rate={data?.kpis?.recovery_rate_pct || 71.2}
-              />
-
-              {/* Common Defects with Click-to-Filter on Defect Categories */}
+            {/* Bottom 3-Card Analytics Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <CommonDefectsChart
                 data={data?.common_defects || []}
                 isLoading={isLoading}
@@ -200,31 +223,12 @@ export default function DashboardPage() {
                   );
                 }}
               />
-            </div>
 
-            {/* Right Insights Column: Eco Impact + Bench Tests + Forecast Variance + Quote */}
-            <div className="lg:col-span-6 xl:col-span-3 space-y-6 flex flex-col">
-              {/* Eco Impact Card */}
-              <EcoImpactCard
-                wasteDivertedKg={data?.kpis?.waste_diverted_kg || 26.8}
-              />
-
-              {/* Human Review Queue with Click-to-Resolve Bench Tests */}
-              <div id="review-queue-card">
-                <HumanReviewQueue
-                  queue={data?.human_review_queue || []}
-                  isLoading={isLoading}
-                  onResolveItem={(item) => setSelectedReviewItem(item)}
-                />
-              </div>
-
-              {/* Forecast vs Realized Recovery Value (Predicted vs Actual) */}
               <PredictedVsActualChart
                 data={data?.predicted_vs_actual || []}
                 isLoading={isLoading}
               />
 
-              {/* Sustainability Quote Card */}
               <EcoQuoteCard />
             </div>
           </div>
@@ -232,36 +236,44 @@ export default function DashboardPage() {
       </main>
 
       {/* Global Clean Professional Footer */}
-      <footer className="border-t border-slate-200/60 py-4 px-8 text-xs text-slate-400 bg-white/60 backdrop-blur-sm mt-8">
+      <footer className="border-t border-slate-200/80 py-4 px-8 text-xs text-slate-400 bg-white/60 backdrop-blur-sm mt-8">
         <div className="flex flex-col sm:flex-row items-center justify-between max-w-[1800px] mx-auto gap-2">
           <span>ReLife AI • Universal Circular Product Recovery OS</span>
           <span>Enterprise Fleet Recovery Engine</span>
         </div>
       </footer>
 
-      {/* Interactive Modal Dialogs */}
-      <IntakeModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSuccess={() => {
-          showToast('Product return registered and routed to circular pathway!');
-          loadData(dateRange);
-        }}
-      />
+      {/* Modal Dialogs */}
+      {isAddModalOpen && (
+        <IntakeModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSuccess={() => {
+            setIsAddModalOpen(false);
+            showToast('Return item successfully registered and evaluated!');
+            loadData(dateRange);
+          }}
+        />
+      )}
 
-      <ReturnDetailModal
-        item={selectedReturn}
-        onClose={() => setSelectedReturn(null)}
-      />
+      {selectedReturn && (
+        <ReturnDetailModal
+          item={selectedReturn}
+          onClose={() => setSelectedReturn(null)}
+        />
+      )}
 
-      <ResolveReviewModal
-        item={selectedReviewItem}
-        onClose={() => setSelectedReviewItem(null)}
-        onSuccess={() => {
-          showToast('Bench inspection resolved and marked as Recovered!');
-          loadData(dateRange);
-        }}
-      />
+      {selectedReviewItem && (
+        <ResolveReviewModal
+          item={selectedReviewItem}
+          onClose={() => setSelectedReviewItem(null)}
+          onSuccess={() => {
+            setSelectedReviewItem(null);
+            showToast('Human bench test resolved and pathway updated!');
+            loadData(dateRange);
+          }}
+        />
+      )}
     </div>
   );
 }

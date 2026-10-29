@@ -33,6 +33,24 @@ def get_sample_images():
             "url": "/api/inspections/image/laptop_cracked_screen.jpg"
         },
         {
+            "id": "cloth_stained_dress",
+            "filename": "cloth_stained_dress.jpg",
+            "title": "Clothing - Stained Dress",
+            "description": "Irreversible chemical & food stain; evaluates for whole material textile recycling",
+            "expected_defect": "stain",
+            "severity": "high",
+            "url": "/api/inspections/image/cloth_stained_dress.jpg"
+        },
+        {
+            "id": "cloth_torn_fabric",
+            "filename": "cloth_torn_fabric.jpg",
+            "title": "Clothing - Torn Garment",
+            "description": "Major structural fabric tear along seams; evaluates for fiber shredding & recycling",
+            "expected_defect": "tear",
+            "severity": "high",
+            "url": "/api/inspections/image/cloth_torn_fabric.jpg"
+        },
+        {
             "id": "phone_scratched_back",
             "filename": "phone_scratched_back.jpg",
             "title": "Smartphone - Scratched Casing",
@@ -97,10 +115,14 @@ async def upload_inspection_images(
     filename_used = "uploaded_inspection.jpg"
 
     if files and len(files) > 0 and files[0].filename:
-        # User uploaded actual image file
+        # User uploaded actual image file or camera capture
         file = files[0]
-        filename_used = file.filename
         image_bytes = await file.read()
+        safe_fname = f"capture_{return_id}_{int(datetime.utcnow().timestamp())}.jpg"
+        filename_used = safe_fname
+        fpath = os.path.join(SAMPLE_DIR, safe_fname)
+        with open(fpath, "wb") as f:
+            f.write(image_bytes)
     elif sample_filename:
         # Using pre-seeded sample image
         filename_used = sample_filename
@@ -133,7 +155,9 @@ async def upload_inspection_images(
         blur_score=analysis["blur_score"],
         is_blurry=analysis["is_blurry"],
         quality_flag=analysis["quality_flag"],
-        model_version=analysis["model_version"],
+        model_version=analysis.get("model_version", "OpenCV-YOLOv8-MultiDomain-v2.0"),
+        image_paths_json=f"/api/inspections/image/{filename_used}",
+        notes=analysis.get("model_version", "OpenCV-YOLOv8-MultiDomain-v2.0"),
         inspected_at=now
     )
     db.add(inspection)

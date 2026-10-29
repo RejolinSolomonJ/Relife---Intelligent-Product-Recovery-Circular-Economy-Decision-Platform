@@ -9,17 +9,12 @@ import {
   TrendingUp,
   Award,
   CheckCircle2,
-  AlertCircle,
   PlusCircle,
   RefreshCw,
   Download,
-  Calendar,
-  Layers,
-  Sparkles,
   ArrowRight,
   ShieldCheck,
   FileCheck,
-  BarChart3
 } from 'lucide-react';
 import {
   BarChart,
@@ -29,7 +24,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-  CartesianGrid
+  CartesianGrid,
 } from 'recharts';
 
 export function OutcomeTrackingWorkbench() {
@@ -115,12 +110,12 @@ export function OutcomeTrackingWorkbench() {
     <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-3 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-200 text-xs flex items-center justify-between shadow-lg">
+        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>{toastMessage}</span>
+            <CheckCircle2 className="w-4 h-4 text-[#073E2E] shrink-0" />
+            <span className="font-semibold">{toastMessage}</span>
           </div>
-          <button onClick={() => setToastMessage(null)} className="text-emerald-400 hover:text-white font-bold ml-4">✕</button>
+          <button onClick={() => setToastMessage(null)} className="text-emerald-700 hover:text-emerald-950 font-bold ml-4">✕</button>
         </div>
       )}
 
@@ -128,34 +123,34 @@ export function OutcomeTrackingWorkbench() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card title="Total Realized Revenue">
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold font-mono text-[#FFC21A]">
+            <span className="text-3xl font-extrabold font-mono text-[#073E2E]">
               {formatINR(data?.total_realized_revenue || 0)}
             </span>
           </div>
-          <p className="text-[10px] text-emerald-400 mt-1 flex items-center gap-1 font-semibold">
+          <p className="text-[10px] text-emerald-700 mt-1 flex items-center gap-1 font-semibold">
             <TrendingUp className="w-3 h-3" />
-            <span>Validated downstream partner settlements</span>
+            <span>Validated downstream settlements</span>
           </p>
         </Card>
 
         <Card title="Net Circular Margin">
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold font-mono text-emerald-400">
+            <span className="text-3xl font-extrabold font-mono text-emerald-700">
               {formatINR(data?.total_net_value || 0)}
             </span>
           </div>
-          <p className="text-[10px] text-slate-400 mt-1">
-            Cost Incurred: <strong className="text-slate-300 font-mono">{formatINR(data?.total_realized_cost || 0)}</strong>
+          <p className="text-[10px] text-slate-500 mt-1">
+            Cost Incurred: <strong className="text-slate-700 font-mono">{formatINR(data?.total_realized_cost || 0)}</strong>
           </p>
         </Card>
 
-        <Card title="E-Waste Diverted from Landfill">
+        <Card title="E-Waste Diverted">
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold font-mono text-cyan-400">
+            <span className="text-3xl font-extrabold font-mono text-sky-700">
               {formatKg(data?.total_waste_diverted_kg || 0)}
             </span>
           </div>
-          <p className="text-[10px] text-cyan-300 mt-1 flex items-center gap-1 font-semibold">
+          <p className="text-[10px] text-sky-700 mt-1 flex items-center gap-1 font-semibold">
             <ShieldCheck className="w-3 h-3" />
             <span>Zero hazardous landfill contamination</span>
           </p>
@@ -163,11 +158,11 @@ export function OutcomeTrackingWorkbench() {
 
         <Card title="Model Decision Accuracy">
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold font-mono text-purple-400">
+            <span className="text-3xl font-extrabold font-mono text-purple-700">
               {data?.avg_accuracy_pct || 93.4}%
             </span>
           </div>
-          <p className="text-[10px] text-purple-300 mt-1 flex items-center gap-1 font-semibold">
+          <p className="text-[10px] text-purple-700 mt-1 flex items-center gap-1 font-semibold">
             <Award className="w-3 h-3" />
             <span>Predicted vs Actual correlation</span>
           </p>
@@ -182,7 +177,7 @@ export function OutcomeTrackingWorkbench() {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#FFC21A] to-[#F57C00] text-slate-950 text-xs font-bold shadow-md hover:brightness-110 active:scale-[0.99] cursor-pointer transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white text-xs font-bold shadow-sm transition-all"
             >
               <PlusCircle className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>Record Actual Outcome</span>
@@ -190,7 +185,7 @@ export function OutcomeTrackingWorkbench() {
             <button
               type="button"
               onClick={downloadESGCertificate}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1E202E] hover:bg-[#252836] text-[#FFC21A] border border-[#FFC21A]/30 text-xs font-semibold cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#073E2E] border border-slate-200 text-xs font-semibold cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               <span>ESG Certificate</span>
@@ -198,7 +193,7 @@ export function OutcomeTrackingWorkbench() {
             <button
               type="button"
               onClick={loadData}
-              className="p-1.5 rounded-xl bg-[#1E202E] hover:bg-[#252836] text-slate-300 hover:text-white border border-[#252836]"
+              className="p-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200"
               title="Refresh"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -207,14 +202,14 @@ export function OutcomeTrackingWorkbench() {
         }
       >
         <div className="pt-2">
-          <p className="text-xs text-slate-400 mb-4">
-            Comparison of AI decision engine predicted net recovery value versus finalized bank reconciliation settlements.
+          <p className="text-xs text-slate-500 mb-4">
+            Comparison of AI decision engine predicted net recovery value versus finalized partner settlements.
           </p>
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#252836" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                 <XAxis dataKey="name" stroke="#94A3B8" fontSize={11} tickLine={false} />
                 <YAxis
                   stroke="#94A3B8"
@@ -227,13 +222,13 @@ export function OutcomeTrackingWorkbench() {
                     if (active && payload && payload.length) {
                       const d = payload[0].payload;
                       return (
-                        <div className="bg-[#12131A] border border-[#252836] p-3 rounded-xl shadow-xl text-xs space-y-1">
-                          <p className="font-bold text-white">{d.product}</p>
+                        <div className="bg-white border border-slate-200 p-3 rounded-2xl shadow-xl text-xs space-y-1">
+                          <p className="font-bold text-slate-900">{d.product}</p>
                           <p className="text-[11px] text-slate-400">ID: {d.name}</p>
                           <div className="pt-1 space-y-0.5 font-mono">
-                            <p className="text-[#22D3EE]">Predicted: {formatINR(d.predicted)}</p>
-                            <p className="text-[#FFC21A]">Actual: {formatINR(d.actual)}</p>
-                            <p className="text-emerald-400 font-bold">
+                            <p className="text-[#073E2E]">Predicted: {formatINR(d.predicted)}</p>
+                            <p className="text-[#10B981]">Actual: {formatINR(d.actual)}</p>
+                            <p className="text-emerald-700 font-bold">
                               Variance: {(((d.actual - d.predicted) / d.predicted) * 100).toFixed(1)}%
                             </p>
                           </div>
@@ -247,8 +242,8 @@ export function OutcomeTrackingWorkbench() {
                   wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
                   formatter={(val) => (val === 'predicted' ? 'Predicted Net Value (₹)' : 'Actual Realized Net Value (₹)')}
                 />
-                <Bar dataKey="predicted" fill="#22D3EE" radius={[4, 4, 0, 0]} maxBarSize={30} />
-                <Bar dataKey="actual" fill="#FFC21A" radius={[4, 4, 0, 0]} maxBarSize={30} />
+                <Bar dataKey="predicted" fill="#073E2E" radius={[4, 4, 0, 0]} maxBarSize={30} />
+                <Bar dataKey="actual" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={30} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -260,7 +255,7 @@ export function OutcomeTrackingWorkbench() {
         <div className="overflow-x-auto pt-2">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-[#252836] text-slate-400 uppercase text-[10px] font-mono">
+              <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] font-mono">
                 <th className="py-3 px-3">Return ID & Device</th>
                 <th className="py-3 px-3">Pathways (Pred → Act)</th>
                 <th className="py-3 px-3">Predicted Value</th>
@@ -271,11 +266,11 @@ export function OutcomeTrackingWorkbench() {
                 <th className="py-3 px-3 text-right">E-Waste Diverted</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E202E]">
+            <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
                   <td colSpan={8} className="py-8 text-center text-slate-400">
-                    <RefreshCw className="w-4 h-4 animate-spin inline-block mr-2 text-[#FFC21A]" />
+                    <RefreshCw className="w-4 h-4 animate-spin inline-block mr-2 text-[#073E2E]" />
                     Loading verified outcome audit records...
                   </td>
                 </tr>
@@ -287,40 +282,40 @@ export function OutcomeTrackingWorkbench() {
                 </tr>
               ) : (
                 data?.outcomes.map(out => (
-                  <tr key={out.id} className="hover:bg-[#1E202E]/40 transition-colors">
+                  <tr key={out.id} className="hover:bg-slate-50 transition-colors">
                     <td className="py-3 px-3">
-                      <span className="font-mono font-bold text-white block">{out.return_id}</span>
+                      <span className="font-mono font-bold text-slate-900 block">{out.return_id}</span>
                       <span className="text-[11px] text-slate-400">{out.product_name}</span>
                     </td>
                     <td className="py-3 px-3 font-semibold">
                       <div className="flex items-center gap-1.5 text-[11px]">
                         <span className="text-slate-400">{out.predicted_pathway}</span>
-                        <ArrowRight className="w-3 h-3 text-[#FFC21A]" />
-                        <span className="text-white font-bold">{out.actual_pathway}</span>
+                        <ArrowRight className="w-3 h-3 text-[#073E2E]" />
+                        <span className="text-slate-900 font-bold">{out.actual_pathway}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-3 font-mono text-slate-300">
+                    <td className="py-3 px-3 font-mono text-slate-600">
                       {formatINR(out.predicted_revenue)}
                     </td>
-                    <td className="py-3 px-3 font-mono font-bold text-[#FFC21A]">
+                    <td className="py-3 px-3 font-mono font-bold text-[#073E2E]">
                       {formatINR(out.actual_revenue)}
                     </td>
                     <td className="py-3 px-3 font-mono">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         out.revenue_variance_pct >= 0
-                          ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/30'
-                          : 'bg-amber-950/80 text-amber-300 border border-amber-500/30'
+                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                          : 'bg-amber-50 text-amber-800 border border-amber-200'
                       }`}>
                         {out.revenue_variance_pct >= 0 ? '+' : ''}{out.revenue_variance_pct}%
                       </span>
                     </td>
-                    <td className="py-3 px-3 font-mono text-slate-300">
+                    <td className="py-3 px-3 font-mono text-slate-600">
                       {formatINR(out.actual_cost)}
                     </td>
-                    <td className="py-3 px-3 font-mono font-extrabold text-emerald-400">
+                    <td className="py-3 px-3 font-mono font-extrabold text-emerald-700">
                       {formatINR(out.actual_net_value)}
                     </td>
-                    <td className="py-3 px-3 text-right font-mono text-cyan-300">
+                    <td className="py-3 px-3 text-right font-mono text-sky-700">
                       {formatKg(out.waste_diverted_kg)}
                     </td>
                   </tr>
@@ -333,16 +328,16 @@ export function OutcomeTrackingWorkbench() {
 
       {/* Record Outcome Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="bg-[#12131A] border border-[#252836] rounded-2xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#252836]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white border border-slate-200 rounded-[24px] w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <FileCheck className="w-5 h-5 text-[#FFC21A]" />
-                <h3 className="font-bold text-sm text-white">Record Verified Closed-Loop Outcome</h3>
+                <FileCheck className="w-5 h-5 text-[#073E2E]" />
+                <h3 className="font-bold text-sm text-slate-900">Record Verified Closed-Loop Outcome</h3>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white font-bold"
+                className="text-slate-400 hover:text-slate-600 font-bold"
               >
                 ✕
               </button>
@@ -350,24 +345,24 @@ export function OutcomeTrackingWorkbench() {
 
             <form onSubmit={handleSubmitOutcome} className="space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Product Return ID</label>
+                <label className="block text-slate-700 font-bold mb-1">Product Return ID</label>
                 <input
                   type="text"
                   required
                   value={formData.return_id}
                   onChange={(e) => setFormData({ ...formData, return_id: e.target.value })}
                   placeholder="e.g. REL-DEMO-001, REL-DEMO-002, RET-2026-0001"
-                  className="w-full bg-[#08080D] border border-[#252836] rounded-xl px-3 py-2 text-white font-mono text-xs outline-none focus:border-[#FFC21A]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs outline-none focus:border-[#073E2E]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">Finalized Pathway</label>
+                  <label className="block text-slate-700 font-bold mb-1">Finalized Pathway</label>
                   <select
                     value={formData.actual_pathway}
                     onChange={(e) => setFormData({ ...formData, actual_pathway: e.target.value })}
-                    className="w-full bg-[#08080D] border border-[#252836] rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[#FFC21A]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs outline-none focus:border-[#073E2E]"
                   >
                     <option value="Direct Resale">Direct Resale</option>
                     <option value="Repair">Repair</option>
@@ -378,21 +373,21 @@ export function OutcomeTrackingWorkbench() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">Turnaround Days</label>
+                  <label className="block text-slate-700 font-bold mb-1">Turnaround Days</label>
                   <input
                     type="number"
                     min="1"
                     max="30"
                     value={formData.actual_time_days}
                     onChange={(e) => setFormData({ ...formData, actual_time_days: Number(e.target.value) })}
-                    className="w-full bg-[#08080D] border border-[#252836] rounded-xl px-3 py-2 text-white font-mono text-xs outline-none focus:border-[#FFC21A]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs outline-none focus:border-[#073E2E]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">Actual Realized Revenue (₹)</label>
+                  <label className="block text-slate-700 font-bold mb-1">Actual Realized Revenue (₹)</label>
                   <input
                     type="number"
                     required
@@ -400,12 +395,12 @@ export function OutcomeTrackingWorkbench() {
                     step="100"
                     value={formData.actual_revenue}
                     onChange={(e) => setFormData({ ...formData, actual_revenue: Number(e.target.value) })}
-                    className="w-full bg-[#08080D] border border-[#252836] rounded-xl px-3 py-2 text-[#FFC21A] font-mono text-xs font-bold outline-none focus:border-[#FFC21A]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[#073E2E] font-mono text-xs font-bold outline-none focus:border-[#073E2E]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">Actual Total Cost Incurred (₹)</label>
+                  <label className="block text-slate-700 font-bold mb-1">Actual Total Cost Incurred (₹)</label>
                   <input
                     type="number"
                     required
@@ -413,19 +408,19 @@ export function OutcomeTrackingWorkbench() {
                     step="50"
                     value={formData.actual_cost}
                     onChange={(e) => setFormData({ ...formData, actual_cost: Number(e.target.value) })}
-                    className="w-full bg-[#08080D] border border-[#252836] rounded-xl px-3 py-2 text-slate-200 font-mono text-xs outline-none focus:border-[#FFC21A]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono text-xs outline-none focus:border-[#073E2E]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Technician Settlement Notes</label>
+                <label className="block text-slate-700 font-bold mb-1">Technician Settlement Notes</label>
                 <textarea
                   rows={2}
                   value={formData.notes || ''}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="Settlement notes, buyer confirmation, parts replaced..."
-                  className="w-full bg-[#08080D] border border-[#252836] rounded-xl p-3 text-slate-200 text-xs outline-none focus:border-[#FFC21A]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 text-xs outline-none focus:border-[#073E2E]"
                 />
               </div>
 
@@ -433,14 +428,14 @@ export function OutcomeTrackingWorkbench() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#1E202E] text-slate-300 hover:text-white text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FFC21A] to-[#F57C00] text-slate-950 font-bold text-xs shadow-md hover:brightness-110 active:scale-[0.99] transition-all flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
                 >
                   {isSubmitting ? (
                     <>

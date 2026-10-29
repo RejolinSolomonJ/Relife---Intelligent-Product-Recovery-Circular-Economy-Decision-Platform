@@ -79,8 +79,7 @@ def submit_functional_tests(
         existing_test.ram_ok = payload.ram_ok
         existing_test.storage_ok = payload.storage_ok
         existing_test.ports_ok = payload.ports_ok
-        existing_test.condition_score = condition_score
-        existing_test.has_unknown_test = has_unknown
+        existing_test.overall_condition_score = condition_score
         existing_test.tested_at = now
     else:
         new_test = FunctionalTest(
@@ -93,8 +92,7 @@ def submit_functional_tests(
             ram_ok=payload.ram_ok,
             storage_ok=payload.storage_ok,
             ports_ok=payload.ports_ok,
-            condition_score=condition_score,
-            has_unknown_test=has_unknown,
+            overall_condition_score=condition_score,
             tested_at=now
         )
         db.add(new_test)
@@ -151,3 +149,4 @@ def get_functional_tests(return_id: str, db: Session = Depends(get_db)):
         "has_unknown_test": test.has_unknown_test,
         "tested_at": test.tested_at.strftime("%Y-%m-%d %H:%M:%S") if test.tested_at else None
     }
+
