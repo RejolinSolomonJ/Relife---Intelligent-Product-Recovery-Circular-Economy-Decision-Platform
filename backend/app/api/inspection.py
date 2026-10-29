@@ -59,6 +59,24 @@ def get_sample_images():
             "url": "/api/inspections/image/phone_scratched_back.jpg"
         },
         {
+            "id": "mouse_scuffed_body",
+            "filename": "mouse_scuffed_body.jpg",
+            "title": "Computer Mouse - Scuffed Body",
+            "description": "Ergonomic gaming/office mouse with palm wear and friction scratches on skates",
+            "expected_defect": "scratch",
+            "severity": "low",
+            "url": "/api/inspections/image/mouse_scuffed_body.jpg"
+        },
+        {
+            "id": "mouse_click_fault",
+            "filename": "mouse_click_fault.jpg",
+            "title": "Computer Mouse - Click Defect",
+            "description": "Primary click switch micro-fracture; requires microswitch replacement",
+            "expected_defect": "crack",
+            "severity": "high",
+            "url": "/api/inspections/image/mouse_click_fault.jpg"
+        },
+        {
             "id": "laptop_clean_pristine",
             "filename": "laptop_clean_pristine.jpg",
             "title": "Pristine Ultrabook - Grade A",
@@ -190,6 +208,11 @@ async def upload_inspection_images(
             return_item.product.model = "Galaxy S23 Ultra"
             return_item.purchase_price = 55000.0
             return_item.product.weight_kg = 0.23
+        elif detected_cat == "Mouse":
+            return_item.product.brand = "Logitech"
+            return_item.product.model = "MX Master 3S Optical Mouse"
+            return_item.purchase_price = 7999.0
+            return_item.product.weight_kg = 0.14
         db.flush()
 
     # Persist in DB
@@ -244,6 +267,7 @@ async def upload_inspection_images(
         detected_category=detected_cat,
         detected_product_label=analysis.get("detected_product_label", "Recognized Product"),
         category_confidence=analysis.get("category_confidence", 95.0),
+        probabilities=analysis.get("probabilities"),
         detection_method=analysis.get("detection_method", "OpenCV Multi-Spectral & Geometry"),
         defects=detected_items,
         honesty_notice=analysis["honesty_notice"],

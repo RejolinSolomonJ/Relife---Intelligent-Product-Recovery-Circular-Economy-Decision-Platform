@@ -16,12 +16,13 @@ from typing import Dict, Any, Tuple, Optional
 import joblib
 
 # Supported circular product recovery domains
-DOMAINS = ["Clothing", "Smartphone", "Laptop"]
+DOMAINS = ["Clothing", "Smartphone", "Laptop", "Mouse"]
 
 LABEL_MAP = {
     "Clothing": "Cotton / Synthetic Textile Garment",
     "Smartphone": "Smartphone (Touchscreen Glass Display)",
     "Laptop": "Laptop Computer (Clamshell PC)",
+    "Mouse": "Computer Mouse / Peripheral Controller",
 }
 
 MODEL_PATH = Path(__file__).parent / "product_classifier.joblib"
@@ -169,7 +170,16 @@ def predict_product_ml(
             "category": "Laptop",
             "label": LABEL_MAP["Laptop"],
             "confidence": 97.5,
-            "probabilities": {"Laptop": 97.5, "Smartphone": 1.8, "Clothing": 0.7},
+            "probabilities": {"Laptop": 97.5, "Smartphone": 1.5, "Mouse": 0.5, "Clothing": 0.5},
+            "method": "Technician Confirmed Preset",
+            "features_inspected": "Manual Verification Override"
+        }
+    if any(k in hint_lower for k in ["mouse", "pointer", "trackball", "peripheral", "clicker"]):
+        return {
+            "category": "Mouse",
+            "label": LABEL_MAP["Mouse"],
+            "confidence": 98.2,
+            "probabilities": {"Mouse": 98.2, "Laptop": 1.0, "Smartphone": 0.5, "Clothing": 0.3},
             "method": "Technician Confirmed Preset",
             "features_inspected": "Manual Verification Override"
         }
@@ -183,21 +193,24 @@ def predict_product_ml(
         try:
             raw_probs = model.predict_proba([feat])[0]
             # Prior boost if filename hints domain
-            p_cloth = raw_probs[0] + (0.25 if any(k in fname_lower for k in ["cloth", "dress", "textile", "fabric", "stain", "tear", "garment", "shirt"]) else 0.0)
-            p_phone = raw_probs[1] + (0.25 if any(k in fname_lower for k in ["phone", "mobile", "galaxy", "iphone", "pixel", "scratched_back"]) else 0.0)
-            p_laptop = raw_probs[2] + (0.25 if any(k in fname_lower for k in ["laptop", "thinkpad", "macbook", "cracked_screen", "notebook"]) else 0.0)
+            p_cloth = (raw_probs[0] if len(raw_probs) > 0 else 0.0) + (0.25 if any(k in fname_lower for k in ["cloth", "dress", "textile", "fabric", "stain", "tear", "garment", "shirt"]) else 0.0)
+            p_phone = (raw_probs[1] if len(raw_probs) > 1 else 0.0) + (0.25 if any(k in fname_lower for k in ["phone", "mobile", "galaxy", "iphone", "pixel", "scratched_back"]) else 0.0)
+            p_laptop = (raw_probs[2] if len(raw_probs) > 2 else 0.0) + (0.25 if any(k in fname_lower for k in ["laptop", "thinkpad", "macbook", "cracked_screen", "notebook"]) else 0.0)
+            p_mouse = (raw_probs[3] if len(raw_probs) > 3 else 0.0) + (0.25 if any(k in fname_lower for k in ["mouse", "pointer", "trackball", "clicker", "scroll", "peripheral", "g502", "mx_master"]) else 0.0)
 
-            total = max(1e-6, p_cloth + p_phone + p_laptop)
+            total = max(1e-6, p_cloth + p_phone + p_laptop + p_mouse)
             p_cloth /= total
             p_phone /= total
             p_laptop /= total
+            p_mouse /= total
 
             prob_dict = {
                 "Clothing": round(float(p_cloth) * 100.0, 1),
                 "Smartphone": round(float(p_phone) * 100.0, 1),
                 "Laptop": round(float(p_laptop) * 100.0, 1),
+                "Mouse": round(float(p_mouse) * 100.0, 1),
             }
-            winner_idx = int(np.argmax([p_cloth, p_phone, p_laptop]))
+            winner_idx = int(np.argmax([p_cloth, p_phone, p_laptop, p_mouse]))
             category = DOMAINS[winner_idx]
             confidence = prob_dict[category]
 
@@ -230,6 +243,7 @@ def predict_product_ml(
     clothing_prior = 1.8 if any(k in fname_lower for k in ["cloth", "dress", "textile", "fabric", "stain", "tear", "garment", "shirt"]) else 0.0
     phone_prior = 1.8 if any(k in fname_lower for k in ["phone", "mobile", "galaxy", "iphone", "pixel", "scratched_back"]) else 0.0
     laptop_prior = 1.8 if any(k in fname_lower for k in ["laptop", "thinkpad", "macbook", "cracked_screen", "notebook"]) else 0.0
+    mouse_prior = 1.8 if any(k in fname_lower for k in ["mouse", "pointer", "trackball", "clicker", "scroll", "peripheral", "g502", "mx_master"]) else 0.0
 
     # Compute domain logits
     logit_clothing = (
@@ -260,7 +274,16 @@ def predict_product_ml(
         + 0.4
     )
 
-    logits = np.array([logit_clothing, logit_phone, logit_laptop], dtype=np.float32)
+    logit_mouse = (
+        mouse_prior
+        + (aspect_norm * 2.6)
+        + (rectangularity * 1.4)
+        - (hough_density * 1.4)
+        - (fold_roughness * 1.8)
+        + 0.3
+    )
+
+    logits = np.array([logit_clothing, logit_phone, logit_laptop, logit_mouse], dtype=np.float32)
     # Softmax for calibrated probabilities
     exp_logits = np.exp(logits - np.max(logits))
     probs = exp_logits / np.sum(exp_logits)
@@ -269,6 +292,7 @@ def predict_product_ml(
         "Clothing": round(float(probs[0]) * 100.0, 1),
         "Smartphone": round(float(probs[1]) * 100.0, 1),
         "Laptop": round(float(probs[2]) * 100.0, 1),
+        "Mouse": round(float(probs[3]) * 100.0, 1),
     }
 
     winner_idx = int(np.argmax(probs))

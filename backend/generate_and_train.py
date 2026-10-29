@@ -185,6 +185,77 @@ def create_laptop_image(idx: int, variation: str) -> np.ndarray:
     return img
 
 
+def create_mouse_image(idx: int, variation: str) -> np.ndarray:
+    """
+    Synthesizes ergonomic computer mouse / peripheral images with contoured chassis,
+    palm curvature, scroll wheel well, split click buttons, and sensor glide skates.
+    """
+    img = np.full((640, 640, 3), 238, dtype=np.uint8)  # Clean workbench surface
+
+    # Rubberized desk mat / mousepad
+    cv2.rectangle(img, (40, 40), (600, 600), (38, 42, 46), -1)
+    cv2.rectangle(img, (40, 40), (600, 600), (65, 70, 78), 2)
+
+    # Mouse Dimensions & Ergonomic Contours
+    cx, cy = 320, 325
+
+    # 1. Lower Palm Rest Hump (Wider elliptical foundation)
+    cv2.ellipse(img, (cx, cy + 45), (110, 145), 0, 0, 360, (26, 28, 32), -1)
+
+    # 2. Upper Click Button Arch (Tapered front)
+    cv2.ellipse(img, (cx, cy - 65), (96, 115), 0, 0, 360, (26, 28, 32), -1)
+
+    # 3. Ergonomic Thumb Wing / Flare (Left side thumb rest)
+    thumb_shelf = np.array([
+        [cx - 85, cy - 20],
+        [cx - 135, cy + 45],
+        [cx - 130, cy + 90],
+        [cx - 95, cy + 125]
+    ], np.int32)
+    cv2.fillPoly(img, [thumb_shelf], (22, 24, 28))
+    cv2.polylines(img, [thumb_shelf], False, (75, 80, 90), 2)
+
+    # Subtle metallic accent border around chassis edge
+    cv2.ellipse(img, (cx, cy + 45), (110, 145), 0, 0, 360, (65, 72, 82), 2)
+    cv2.ellipse(img, (cx, cy - 65), (96, 115), 0, 0, 360, (65, 72, 82), 2)
+
+    # 4. Central Split Seam (Separates Left-Click and Right-Click)
+    cv2.line(img, (cx, cy - 175), (cx, cy - 15), (12, 14, 16), 3)
+
+    # 5. Scroll Wheel Well & Textured Rubber Wheel
+    cv2.rectangle(img, (cx - 15, cy - 135), (cx + 15, cy - 50), (10, 11, 14), -1)
+    # Scroll wheel cylinder
+    cv2.rectangle(img, (cx - 10, cy - 128), (cx + 10, cy - 56), (70, 76, 85), -1)
+    # Textured horizontal friction ribs on scroll wheel
+    for ry in range(cy - 122, cy - 58, 8):
+        cv2.line(img, (cx - 10, ry), (cx + 10, ry), (22, 24, 28), 2)
+
+    # 6. DPI Shift Button & Profile LED
+    cv2.rectangle(img, (cx - 9, cy - 42), (cx + 9, cy - 24), (45, 50, 58), -1)
+    cv2.rectangle(img, (cx - 9, cy - 42), (cx + 9, cy - 24), (90, 95, 105), 1)
+
+    # 7. Brand Gaming / Office Emblem
+    cv2.circle(img, (cx, cy + 85), 15, (60, 66, 75), -1)
+    cv2.putText(img, "G", (cx - 7, cy + 92), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (160, 175, 195), 2)
+
+    # Surface Wear / Defects
+    if "scratch" in variation:
+        # Matte palm finish scuffs & micro-abrasions
+        for _ in range(6):
+            sx = np.random.randint(cx - 55, cx + 55)
+            sy = np.random.randint(cy + 15, cy + 120)
+            cv2.line(img, (sx, sy), (sx + np.random.randint(-30, 30), sy + np.random.randint(-20, 20)), (135, 140, 150), 1)
+    elif "crack" in variation:
+        # Microswitch button plate crack
+        cv2.line(img, (cx + 18, cy - 145), (cx + 68, cy - 75), (225, 230, 245), 2)
+        cv2.line(img, (cx + 68, cy - 75), (cx + 90, cy - 105), (195, 200, 215), 1)
+    elif "stain" in variation or "dent" in variation:
+        # Grip oil buildup or worn rubber pad on thumb shelf
+        cv2.ellipse(img, (cx - 105, cy + 55), (18, 30), -20, 0, 360, (15, 16, 18), -1)
+
+    return img
+
+
 def generate_dataset_and_train():
     print("=================================================================")
     print("  ReLife AI - Image Generation & Multi-Spectral ML Training Studio")
@@ -195,7 +266,7 @@ def generate_dataset_and_train():
 
     print("\n1. Generating synthetic visual training & testing images...")
 
-    # Generate 15 images per class (45 total high-fidelity images)
+    # Generate 15 images per class (60 total high-fidelity images across 4 classes)
     for i in range(15):
         v = variations[i % len(variations)]
 
@@ -217,6 +288,12 @@ def generate_dataset_and_train():
         cv2.imwrite(l_path, laptop_img)
         dataset_records.append((l_path, 2, "Laptop"))
 
+        # 4. Computer Mouse / Peripheral
+        mouse_img = create_mouse_image(i, v)
+        m_path = os.path.join(DATASET_DIR, f"mouse_{i+1:02d}_{v}.jpg")
+        cv2.imwrite(m_path, mouse_img)
+        dataset_records.append((m_path, 3, "Mouse"))
+
     print(f"   [DONE] Generated {len(dataset_records)} visual images in: {DATASET_DIR}")
 
     # Copy key demonstration images into samples directory for instant frontend inspection
@@ -226,6 +303,8 @@ def generate_dataset_and_train():
     cv2.imwrite(os.path.join(SAMPLES_DIR, "phone_cracked_screen.jpg"), create_smartphone_image(3, "crack"))
     cv2.imwrite(os.path.join(SAMPLES_DIR, "laptop_cracked_screen.jpg"), create_laptop_image(4, "crack"))
     cv2.imwrite(os.path.join(SAMPLES_DIR, "laptop_clean_pristine.jpg"), create_laptop_image(5, "clean"))
+    cv2.imwrite(os.path.join(SAMPLES_DIR, "mouse_scuffed_body.jpg"), create_mouse_image(6, "scratch"))
+    cv2.imwrite(os.path.join(SAMPLES_DIR, "mouse_click_fault.jpg"), create_mouse_image(7, "crack"))
 
     print("\n2. Extracting 20-D visual feature vectors & applying data augmentation...")
     X = []
@@ -290,3 +369,4 @@ def generate_dataset_and_train():
 
 if __name__ == "__main__":
     generate_dataset_and_train()
+

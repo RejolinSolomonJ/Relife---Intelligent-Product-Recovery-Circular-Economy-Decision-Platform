@@ -41,7 +41,15 @@ def evaluate_five_pathways(
     w_speed = weights.get("speed", 15.0) / total_w
     w_risk = weights.get("risk", 15.0) / total_w
 
-    cat_key = "Laptop" if "laptop" in category.lower() else "Smartphone"
+    cat_lower = category.lower()
+    if any(k in cat_lower for k in ["cloth", "dress", "textile", "apparel", "garment"]):
+        cat_key = "Clothing"
+    elif any(k in cat_lower for k in ["mouse", "pointer", "trackball", "peripheral"]):
+        cat_key = "Mouse"
+    elif any(k in cat_lower for k in ["phone", "mobile", "smartphone"]):
+        cat_key = "Smartphone"
+    else:
+        cat_key = "Laptop"
     is_apparel = any(k in category.lower() for k in ["cloth", "dress", "textile", "apparel", "garment", "fabric", "fashion", "linen", "cotton"]) or any(d.get("defect_type") in ["stain", "tear"] for d in defects)
 
     # Analyze defects

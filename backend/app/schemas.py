@@ -153,6 +153,7 @@ class ImageInspectionResponse(BaseModel):
     detected_category: str = "Laptop"
     detected_product_label: str = "Laptop Computer"
     category_confidence: float = 95.0
+    probabilities: Optional[Dict[str, float]] = None
     detection_method: str = "YOLOv8 + OpenCV Multi-Spectral"
     defects: List[DefectDetectionItem]
     honesty_notice: str

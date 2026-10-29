@@ -444,43 +444,22 @@ export function InspectionWorkbench({ initialCameraAutoStart = false }: Inspecti
 
                 <button
                   type="button"
-                  onClick={() => handleSelectSample('cloth_torn_fabric.jpg')}
+                  onClick={() => handleSelectSample('mouse_scuffed_body.jpg')}
                   className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                    selectedSample === 'cloth_torn_fabric.jpg'
+                    selectedSample === 'mouse_scuffed_body.jpg'
                       ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs'
                       : 'border-slate-200 hover:bg-slate-50'
                   }`}
                 >
                   <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900">
-                    <span className="text-base">👕</span>
-                    <span>Torn Garment</span>
+                    <span className="text-base">🖱️</span>
+                    <span>Optical Mouse</span>
                   </div>
                   <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
-                    Structural tear; mechanical shredding & zero-landfill flow
+                    PTFE skate wear & palm scuff; classifies as Computer Peripheral
                   </p>
-                  <span className="text-[9px] font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded-md mt-2 inline-block">
-                    Fabric Scenario
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleSelectSample('laptop_cracked_screen.jpg')}
-                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                    selectedSample === 'laptop_cracked_screen.jpg'
-                      ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs'
-                      : 'border-slate-200 hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900">
-                    <span className="text-base">💻</span>
-                    <span>Cracked Laptop</span>
-                  </div>
-                  <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
-                    Display crack; evaluates Repair vs Harvesting
-                  </p>
-                  <span className="text-[9px] font-bold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded-md mt-2 inline-block">
-                    Electronics Scenario
+                  <span className="text-[9px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-md mt-2 inline-block">
+                    Peripheral Scenario
                   </span>
                 </button>
 
@@ -635,7 +614,7 @@ export function InspectionWorkbench({ initialCameraAutoStart = false }: Inspecti
             <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-slate-50 border border-emerald-200/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-[#073E2E] text-white flex items-center justify-center text-lg font-bold shadow-sm shrink-0">
-                  {inspectionData?.detected_category === 'Clothing' ? '👗' : inspectionData?.detected_category === 'Smartphone' ? '📱' : '💻'}
+                  {inspectionData?.detected_category === 'Clothing' ? '👗' : inspectionData?.detected_category === 'Smartphone' ? '📱' : inspectionData?.detected_category === 'Mouse' ? '🖱️' : '💻'}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -652,6 +631,23 @@ export function InspectionWorkbench({ initialCameraAutoStart = false }: Inspecti
                   <p className="text-[10px] text-slate-500">
                     Method: {inspectionData?.detection_method || 'OpenCV Multi-Spectral & Aspect Ratio Classifier'}
                   </p>
+                  {inspectionData?.probabilities && (
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">ML Probs:</span>
+                      {Object.entries(inspectionData.probabilities).map(([cat, prob]) => (
+                        <span
+                          key={cat}
+                          className={`text-[10px] font-mono px-2 py-0.5 rounded-md font-semibold border ${
+                            cat === inspectionData.detected_category
+                              ? 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold'
+                              : 'bg-white/80 text-slate-600 border-slate-200'
+                          }`}
+                        >
+                          {cat === 'Clothing' ? '👗' : cat === 'Smartphone' ? '📱' : cat === 'Mouse' ? '🖱️' : '💻'} {cat}: {prob}%
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -690,6 +686,17 @@ export function InspectionWorkbench({ initialCameraAutoStart = false }: Inspecti
                   }`}
                 >
                   💻 Laptop
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleForceCategory('Mouse')}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                    (inspectionData?.detected_category === 'Mouse' || selectedCategoryHint === 'Mouse')
+                      ? 'bg-[#073E2E] text-white shadow-xs'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  🖱️ Mouse
                 </button>
               </div>
             </div>

@@ -155,6 +155,7 @@ export interface ImageInspectionResponse {
   detected_category?: string;
   detected_product_label?: string;
   category_confidence?: number;
+  probabilities?: Record<string, number>;
   detection_method?: string;
   model_version?: string;
   defects: DefectDetectionItem[];

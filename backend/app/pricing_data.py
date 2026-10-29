@@ -25,6 +25,13 @@ COMPONENT_VALUE_RATIOS = {
         "buttons_fasteners": 0.03,
         "lining_fabric": 0.06,
         "main_textile": 0.20,
+    },
+    "Mouse": {
+        "optical_sensor": 0.32,
+        "microswitches": 0.24,
+        "scroll_encoder": 0.16,
+        "chassis_housing": 0.14,
+        "cable_dongle": 0.14,
     }
 }
 
@@ -93,6 +100,13 @@ DEFECT_PART_COSTS = {
         "tear": 1600.0,          # Precision re-weaving / seam tailoring
         "scratch": 400.0,        # Surface fabric de-pilling
         "missing part": 300.0,   # Button / zipper pull replacement
+    },
+    "Mouse": {
+        "scratch": 220.0,        # Chassis buffing / new teflon skates
+        "dent": 380.0,           # Top palm shell replacement
+        "crack": 550.0,          # Click plate / microswitch assembly
+        "missing part": 320.0,   # 2.4GHz wireless receiver / battery door
+        "stain": 180.0,          # Ultrasonic degrease bath
     }
 }
 
