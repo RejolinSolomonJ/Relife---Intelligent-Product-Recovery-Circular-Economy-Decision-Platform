@@ -9,6 +9,11 @@ export type NavigationTab =
   | 'recommendations'
   | 'marketplace'
   | 'outcomes'
+  | 'shop'
+  | 'waitlist'
+  | 'pricing'
+  | 'roi'
+  | 'assistant'
   | 'reports'
   | 'settings';
 

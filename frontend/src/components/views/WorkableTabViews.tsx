@@ -8,6 +8,7 @@ import { RecoveryWizard } from '../wizard/RecoveryWizard';
 import { MarketplaceWorkbench } from '../marketplace/MarketplaceWorkbench';
 import { OutcomeTrackingWorkbench } from '../outcomes/OutcomeTrackingWorkbench';
 import { InspectionWorkbench } from './InspectionWorkbench';
+import { StorefrontWorkbench } from '../shop/StorefrontWorkbench';
 import {
   ScanEye,
   Camera,
@@ -57,6 +58,16 @@ export function WorkableTabViews({ onOpenIntake }: WorkableTabViewsProps) {
       {/* RECOMMENDATIONS MATRIX */}
       {activeTab === 'recommendations' && (
         <InspectionWorkbench />
+      )}
+
+      {/* SHOP STOREFRONT (Feature 1) */}
+      {activeTab === 'shop' && (
+        <StorefrontWorkbench initialSubTab="catalog" />
+      )}
+
+      {/* WAITLIST & DEMAND (Feature 1) */}
+      {activeTab === 'waitlist' && (
+        <StorefrontWorkbench initialSubTab="waitlist" />
       )}
 
       {/* COMPONENT MARKETPLACE (Step 8) */}

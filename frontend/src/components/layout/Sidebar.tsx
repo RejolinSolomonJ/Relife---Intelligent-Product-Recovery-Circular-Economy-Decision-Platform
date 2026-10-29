@@ -12,7 +12,11 @@ import {
   Settings,
   Leaf,
   Sprout,
-  ArrowRight,
+  Store,
+  Users,
+  TrendingDown,
+  Calculator,
+  Bot,
 } from 'lucide-react';
 import { useNavigation, NavigationTab } from '../../context/NavigationContext';
 
@@ -27,6 +31,11 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'register', name: 'Register Product', icon: PlusCircle },
   { id: 'inspections', name: 'Inspections', icon: ScanEye },
   { id: 'recommendations', name: 'Recommendations', icon: Sparkles },
+  { id: 'shop', name: 'Shop Storefront', icon: Store },
+  { id: 'waitlist', name: 'Waitlist & Demand', icon: Users },
+  { id: 'pricing', name: 'Dynamic Pricing', icon: TrendingDown },
+  { id: 'roi', name: 'ROI Business Case', icon: Calculator },
+  { id: 'assistant', name: 'AI Assistant', icon: Bot },
   { id: 'marketplace', name: 'Marketplace', icon: ShoppingBag },
   { id: 'outcomes', name: 'Outcomes', icon: CheckCircle2 },
   { id: 'reports', name: 'Reports', icon: FileBarChart2 },

@@ -230,14 +230,15 @@ def predict_product_ml(
         except Exception:
             pass
 
-    # 2. Mathematical Morpological Heuristic Fallback
+    # 2. Mathematical Morphological Heuristic Fallback & Validation
     s_std_norm = feat[3]
-    hough_density = feat[14]
-    horiz_lines = feat[15]
-    vert_lines = feat[16]
-    aspect_norm = feat[17]  # aspect_ratio / 4.0
-    fold_roughness = feat[18]  # (P^2/A) / 60.0
-    rectangularity = feat[19]
+    hough_density = feat[15]       # num_lines / 30.0
+    horiz_lines = feat[16]         # horizontal_lines / 20.0
+    vert_lines = feat[17]          # vertical_lines / 20.0
+    aspect_norm = feat[18]         # aspect_ratio / 4.0
+    fold_roughness = feat[19]      # (P^2/A) / 60.0
+    rectangularity = feat[20]      # area / bounding_box_area
+    extent = feat[21]              # area / 320^2
 
     # Keyword prior boost if filename hints domain
     clothing_prior = 1.8 if any(k in fname_lower for k in ["cloth", "dress", "textile", "fabric", "stain", "tear", "garment", "shirt"]) else 0.0

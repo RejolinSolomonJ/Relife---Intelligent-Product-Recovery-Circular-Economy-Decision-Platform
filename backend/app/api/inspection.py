@@ -165,14 +165,14 @@ async def upload_inspection_images(
         brand = "Zara Circular" if is_apparel else "Lenovo"
         model_name = "Cotton Blend Midi Dress" if is_apparel else "ThinkPad X1 Carbon Gen 10"
 
-        prod = db.query(Product).filter(Product.category == cat).first()
+        prod = db.query(Product).filter((Product.category == cat) | (Product.category == f"{cat}s")).first()
         if not prod:
             prod = Product(
                 id=f"PROD-{cat[:4].upper()}-{int(datetime.utcnow().timestamp()) % 1000:03d}",
                 brand=brand,
                 model=model_name,
                 category=cat,
-                base_msrp=4500.0 if is_apparel else 85000.0,
+                msrp_inr=4500.0 if is_apparel else 85000.0,
                 weight_kg=0.45 if is_apparel else 1.45,
             )
             db.add(prod)
@@ -196,24 +196,29 @@ async def upload_inspection_images(
 
     # Sync return item & product category with recognized product
     detected_cat = analysis.get("detected_category", "Laptop")
-    if return_item.product and return_item.product.category != detected_cat:
+    if return_item.product:
         return_item.product.category = detected_cat
         if detected_cat == "Clothing":
             return_item.product.brand = "Zara Circular"
-            return_item.product.model = "Textile Apparel Garment"
-            return_item.purchase_price = 4500.0
-            return_item.product.weight_kg = 0.45
+            return_item.product.model = "Cotton Blend Midi Dress"
+            return_item.product.msrp_inr = 4500.0
+            return_item.purchase_price = 4200.0
         elif detected_cat == "Smartphone":
-            return_item.product.brand = "Samsung"
-            return_item.product.model = "Galaxy S23 Ultra"
-            return_item.purchase_price = 55000.0
-            return_item.product.weight_kg = 0.23
+            return_item.product.brand = "Apple"
+            return_item.product.model = "iPhone 14 (128GB)"
+            return_item.product.msrp_inr = 69900.0
+            return_item.purchase_price = 62000.0
         elif detected_cat == "Mouse":
             return_item.product.brand = "Logitech"
             return_item.product.model = "MX Master 3S Optical Mouse"
-            return_item.purchase_price = 7999.0
-            return_item.product.weight_kg = 0.14
-        db.flush()
+            return_item.product.msrp_inr = 8995.0
+            return_item.purchase_price = 7500.0
+        elif detected_cat == "Laptop":
+            return_item.product.brand = "Lenovo"
+            return_item.product.model = "ThinkPad X1 Carbon Gen 10"
+            return_item.product.msrp_inr = 85000.0
+            return_item.purchase_price = 75000.0
+        db.commit()
 
     # Persist in DB
     now = datetime.utcnow()

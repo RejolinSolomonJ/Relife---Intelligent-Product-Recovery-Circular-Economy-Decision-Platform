@@ -339,3 +339,123 @@ export interface RecordOutcomePayload {
   waste_diverted_kg?: number;
   notes?: string;
 }
+
+// Feature 1 & 2: Storefront, Waitlist, Dynamic Pricing & Reverse Auction
+export interface ShopListingItem {
+  id: number;
+  product_id?: string;
+  return_id?: string;
+  title: string;
+  category: string;
+  brand: string;
+  model: string;
+  condition_grade: string;
+  price_inr: number;
+  original_msrp: number;
+  savings_pct: number;
+  stock_quantity: number;
+  available_quantity: number;
+  reservations_count: number;
+  image_url: string;
+  description?: string;
+  auto_book_on_publish: boolean;
+  listing_type: string;
+  published_at?: string;
+  is_reverse_auction?: boolean;
+  auction_info?: {
+    active: boolean;
+    start_price: number;
+    floor_price: number;
+    current_price: number;
+    step_interval_min: number;
+    step_amount: number;
+    seconds_to_next_drop: number;
+  };
+}
+
+export interface WaitlistEnquiryItem {
+  id: number;
+  buyer_name: string;
+  buyer_email: string;
+  buyer_type: 'customer' | 'reseller';
+  category: string;
+  brand: string;
+  model: string;
+  min_condition_grade: string;
+  max_budget_inr: number;
+  quantity_requested: number;
+  status: string;
+  created_at: string;
+}
+
+export interface DemandPerModelItem {
+  model: string;
+  category: string;
+  total_waiting: number;
+  resellers_count: number;
+  customers_count: number;
+  total_quantity: number;
+  max_budget_cap: number;
+  avg_budget: number;
+}
+
+export interface ReservationItem {
+  id: number;
+  listing_id: number;
+  listing_title: string;
+  listing_image?: string;
+  enquiry_id?: number;
+  buyer_name: string;
+  buyer_email: string;
+  buyer_type: string;
+  quantity_reserved: number;
+  reserved_price_inr: number;
+  status: 'pending' | 'confirmed' | 'expired' | 'released';
+  expires_at: string;
+  time_remaining_str: string;
+  is_expired: boolean;
+  created_at: string;
+}
+
+export interface ShopNotificationItem {
+  id: number;
+  user_email: string;
+  user_type: string;
+  title: string;
+  message: string;
+  link_url?: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface CreateWaitlistPayload {
+  buyer_name: string;
+  buyer_email: string;
+  buyer_type: 'customer' | 'reseller';
+  category: string;
+  brand: string;
+  model: string;
+  min_condition_grade: string;
+  max_budget_inr: number;
+  quantity_requested: number;
+}
+
+export interface CreateListingPayload {
+  title: string;
+  category: string;
+  brand: string;
+  model: string;
+  condition_grade: string;
+  price_inr: number;
+  original_msrp?: number;
+  stock_quantity: number;
+  description?: string;
+  image_url?: string;
+  auto_book_on_publish?: boolean;
+  listing_type?: string;
+  is_reverse_auction?: boolean;
+  auction_start_price?: number;
+  auction_floor_price?: number;
+  auction_step_interval_min?: number;
+  auction_step_amount?: number;
+}

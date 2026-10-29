@@ -70,7 +70,7 @@ export function InspectionWorkbench({
   const [samples, setSamples] = useState<SampleImageItem[]>([]);
   const [selectedSample, setSelectedSample] = useState<string>('cloth_stained_dress.jpg');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [previewUrl, setPreviewUrl] = useState<string>('http://localhost:8000/api/inspections/image/cloth_stained_dress.jpg');
+  const [previewUrl, setPreviewUrl] = useState<string>('/api/inspections/image/cloth_stained_dress.jpg');
 
   // Inspection & Evaluation State
   const [selectedCategoryHint, setSelectedCategoryHint] = useState<string>('Auto');
@@ -96,11 +96,14 @@ export function InspectionWorkbench({
     risk: 15,
   });
 
-  // Load sample gallery on mount
+  // Load sample gallery on mount & auto-run first inspection so product is recognized immediately
   useEffect(() => {
     fetchSampleImages()
       .then((data) => setSamples(data))
       .catch((err) => console.error('Error fetching sample images:', err));
+
+    // Auto-detect initial sample on load
+    triggerOpenCVInspection([], 'cloth_stained_dress.jpg');
 
     if (initialCameraAutoStart) {
       startCamera();
@@ -189,7 +192,8 @@ export function InspectionWorkbench({
   const handleSelectSample = (sampleFilename: string) => {
     setSelectedSample(sampleFilename);
     setUploadedFiles([]);
-    setPreviewUrl(`http://localhost:8000/api/inspections/image/${sampleFilename}`);
+    setPreviewUrl(`/api/inspections/image/${sampleFilename}`);
+    setSelectedCategoryHint('Auto');
     triggerOpenCVInspection([], sampleFilename);
   };
 
@@ -206,9 +210,9 @@ export function InspectionWorkbench({
       const formData = new FormData();
       formData.append('return_id', activeReturnId);
 
-      const categoryToUse = forcedCategory || selectedCategoryHint;
-      if (categoryToUse && categoryToUse !== 'Auto') {
-        formData.append('device_hint', categoryToUse);
+      // Only pass device_hint if explicitly passed as a forcedCategory parameter from user override
+      if (forcedCategory && forcedCategory !== 'Auto') {
+        formData.append('device_hint', forcedCategory);
       }
 
       if (filesToUpload.length > 0) {
@@ -225,7 +229,10 @@ export function InspectionWorkbench({
       const inspRes = await uploadInspection(formData);
       setInspectionData(inspRes);
 
+      // Automatically sync selected class pill with the detected product category!
       const detectedCat = inspRes.detected_category || 'Laptop';
+      setSelectedCategoryHint(detectedCat);
+
       const isCloth = detectedCat === 'Clothing' || inspRes.defects.some((d) => d.defect_type === 'stain' || d.defect_type === 'tear');
 
       // 2. Submit appropriate functional validation benchmark
@@ -459,7 +466,7 @@ export function InspectionWorkbench({
                   onClick={() => handleSelectSample('cloth_stained_dress.jpg')}
                   className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                     selectedSample === 'cloth_stained_dress.jpg'
-                      ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs'
+                      ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs ring-1 ring-[#073E2E]'
                       : 'border-slate-200 hover:bg-slate-50'
                   }`}
                 >
@@ -471,28 +478,7 @@ export function InspectionWorkbench({
                     Chemical & oil stain; proves Whole-Material Textile Recycling #1
                   </p>
                   <span className="text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md mt-2 inline-block">
-                    Textile Scenario
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleSelectSample('mouse_scuffed_body.jpg')}
-                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                    selectedSample === 'mouse_scuffed_body.jpg'
-                      ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs'
-                      : 'border-slate-200 hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900">
-                    <span className="text-base">🖱️</span>
-                    <span>Optical Mouse</span>
-                  </div>
-                  <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
-                    PTFE skate wear & palm scuff; classifies as Computer Peripheral
-                  </p>
-                  <span className="text-[9px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-md mt-2 inline-block">
-                    Peripheral Scenario
+                    👗 Clothing
                   </span>
                 </button>
 
@@ -501,7 +487,7 @@ export function InspectionWorkbench({
                   onClick={() => handleSelectSample('phone_scratched_back.jpg')}
                   className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                     selectedSample === 'phone_scratched_back.jpg'
-                      ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs'
+                      ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs ring-1 ring-[#073E2E]'
                       : 'border-slate-200 hover:bg-slate-50'
                   }`}
                 >
@@ -513,7 +499,49 @@ export function InspectionWorkbench({
                     Cosmetic scuffs; qualifies for Direct Resale
                   </p>
                   <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md mt-2 inline-block">
-                    Resale Scenario
+                    📱 Phone
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectSample('laptop_cracked_screen.jpg')}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    selectedSample === 'laptop_cracked_screen.jpg'
+                      ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs ring-1 ring-[#073E2E]'
+                      : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900">
+                    <span className="text-base">💻</span>
+                    <span>Cracked Laptop</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
+                    Display fracture; prioritizes Component Repair / Screen Replacement
+                  </p>
+                  <span className="text-[9px] font-bold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded-md mt-2 inline-block">
+                    💻 Laptop
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectSample('mouse_scuffed_body.jpg')}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    selectedSample === 'mouse_scuffed_body.jpg'
+                      ? 'border-[#073E2E] bg-emerald-50/80 shadow-xs ring-1 ring-[#073E2E]'
+                      : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900">
+                    <span className="text-base">🖱️</span>
+                    <span>Optical Mouse</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
+                    PTFE skate wear & palm scuff; classifies as Computer Peripheral
+                  </p>
+                  <span className="text-[9px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-md mt-2 inline-block">
+                    🖱️ Mouse
                   </span>
                 </button>
               </div>
@@ -647,7 +675,7 @@ export function InspectionWorkbench({
             <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-slate-50 border border-emerald-200/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-[#073E2E] text-white flex items-center justify-center text-lg font-bold shadow-sm shrink-0">
-                  {inspectionData?.detected_category === 'Clothing' ? '👗' : inspectionData?.detected_category === 'Smartphone' ? '📱' : inspectionData?.detected_category === 'Mouse' ? '🖱️' : '💻'}
+                  {inspectionData?.detected_category === 'Clothing' ? '👗' : inspectionData?.detected_category === 'Smartphone' ? '📱' : inspectionData?.detected_category === 'Mouse' ? '🖱️' : inspectionData?.detected_category === 'Laptop' ? '💻' : '🔍'}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -655,44 +683,47 @@ export function InspectionWorkbench({
                       Stage 1 • Product Classification
                     </span>
                     <span className="text-[10px] font-bold text-slate-600 font-mono">
-                      Conf: {inspectionData?.category_confidence || 96.2}%
+                      Conf: {inspectionData ? `${inspectionData.category_confidence.toFixed(1)}%` : 'Auto-Detecting...'}
                     </span>
                   </div>
                   <h4 className="text-sm font-extrabold text-slate-900 mt-0.5">
                     {inspectionData?.detected_product_label || (selectedCategoryHint !== 'Auto' ? selectedCategoryHint : 'Multi-Class Product Identifier')}
                   </h4>
                   <p className="text-[10px] text-slate-500">
-                    Method: {inspectionData?.detection_method || 'OpenCV Multi-Spectral & Aspect Ratio Classifier'}
+                    Method: {inspectionData?.detection_method || 'OpenCV Multi-Spectral & 24-D ML Classifier'}
                   </p>
                   {inspectionData?.probabilities && (
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
                       <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">ML Probs:</span>
-                      {Object.entries(inspectionData.probabilities).map(([cat, prob]) => (
-                        <span
-                          key={cat}
-                          className={`text-[10px] font-mono px-2 py-0.5 rounded-md font-semibold border ${
-                            cat === inspectionData.detected_category
-                              ? 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold'
-                              : 'bg-white/80 text-slate-600 border-slate-200'
-                          }`}
-                        >
-                          {cat === 'Clothing' ? '👗' : cat === 'Smartphone' ? '📱' : cat === 'Mouse' ? '🖱️' : '💻'} {cat}: {prob}%
-                        </span>
-                      ))}
+                      {Object.entries(inspectionData.probabilities).map(([cat, prob]) => {
+                        const isCatSelected = cat === inspectionData.detected_category || (cat === 'Smartphone' && inspectionData.detected_category === 'Phone');
+                        return (
+                          <span
+                            key={cat}
+                            className={`text-[10px] font-mono px-2 py-0.5 rounded-md font-semibold border ${
+                              isCatSelected
+                                ? 'bg-[#073E2E] text-white border-[#073E2E] font-bold shadow-xs'
+                                : 'bg-white/80 text-slate-600 border-slate-200'
+                            }`}
+                          >
+                            {cat === 'Clothing' ? '👗' : cat === 'Smartphone' ? '📱' : cat === 'Mouse' ? '🖱️' : '💻'} {cat}: {prob}%
+                          </span>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Quick Category Override Selector */}
+              {/* Quick Category Selector / Active Classifier Indicator */}
               <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200/90 shrink-0">
                 <span className="text-[10px] font-bold text-slate-400 px-1">Class:</span>
                 <button
                   type="button"
                   onClick={() => handleForceCategory('Clothing')}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                    (inspectionData?.detected_category === 'Clothing' || selectedCategoryHint === 'Clothing')
-                      ? 'bg-[#073E2E] text-white shadow-xs'
+                    (inspectionData?.detected_category === 'Clothing' || (!inspectionData && selectedCategoryHint === 'Clothing'))
+                      ? 'bg-[#073E2E] text-white shadow-xs ring-2 ring-emerald-600'
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
@@ -702,8 +733,8 @@ export function InspectionWorkbench({
                   type="button"
                   onClick={() => handleForceCategory('Smartphone')}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                    (inspectionData?.detected_category === 'Smartphone' || selectedCategoryHint === 'Smartphone')
-                      ? 'bg-[#073E2E] text-white shadow-xs'
+                    (inspectionData?.detected_category === 'Smartphone' || inspectionData?.detected_category === 'Phone' || (!inspectionData && (selectedCategoryHint === 'Smartphone' || selectedCategoryHint === 'Phone')))
+                      ? 'bg-[#073E2E] text-white shadow-xs ring-2 ring-emerald-600'
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
@@ -713,8 +744,8 @@ export function InspectionWorkbench({
                   type="button"
                   onClick={() => handleForceCategory('Laptop')}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                    (inspectionData?.detected_category === 'Laptop' || selectedCategoryHint === 'Laptop')
-                      ? 'bg-[#073E2E] text-white shadow-xs'
+                    (inspectionData?.detected_category === 'Laptop' || (!inspectionData && selectedCategoryHint === 'Laptop'))
+                      ? 'bg-[#073E2E] text-white shadow-xs ring-2 ring-emerald-600'
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
@@ -724,8 +755,8 @@ export function InspectionWorkbench({
                   type="button"
                   onClick={() => handleForceCategory('Mouse')}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                    (inspectionData?.detected_category === 'Mouse' || selectedCategoryHint === 'Mouse')
-                      ? 'bg-[#073E2E] text-white shadow-xs'
+                    (inspectionData?.detected_category === 'Mouse' || (!inspectionData && selectedCategoryHint === 'Mouse'))
+                      ? 'bg-[#073E2E] text-white shadow-xs ring-2 ring-emerald-600'
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
@@ -751,6 +782,13 @@ export function InspectionWorkbench({
                 src={previewUrl}
                 alt="Product Inspection Frame"
                 className="w-full h-full object-contain max-h-[460px]"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.dataset.triedFallback) {
+                    target.dataset.triedFallback = 'true';
+                    target.src = `http://127.0.0.1:8000/api/inspections/image/${selectedSample || 'cloth_stained_dress.jpg'}`;
+                  }
+                }}
               />
 
               {/* Bounding Box SVG Layer */}

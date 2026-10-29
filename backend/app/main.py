@@ -10,6 +10,7 @@ from .api.tests import router as tests_router
 from .api.decision import router as decision_router
 from .api.marketplace import router as marketplace_router
 from .api.outcomes import router as outcomes_router
+from .api.shop import router as shop_router
 from .vision import generate_sample_demo_images
 
 # Create database tables
@@ -52,6 +53,7 @@ app.include_router(tests_router)
 app.include_router(decision_router)
 app.include_router(marketplace_router)
 app.include_router(outcomes_router)
+app.include_router(shop_router)
 
 
 @app.get("/")

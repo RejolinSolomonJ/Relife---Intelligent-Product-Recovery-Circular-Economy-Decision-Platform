@@ -195,6 +195,18 @@ class Component(Base):
     is_harvested = Column(Boolean, default=False)
     buyer_match_id = Column(Integer, nullable=True)
 
+    # Dynamic Pricing & Reverse Auction Support (Feature 2)
+    listed_days_ago = Column(Integer, default=3)
+    is_reverse_auction = Column(Boolean, default=False)
+    auction_start_price = Column(Float, default=0.0)
+    auction_floor_price = Column(Float, default=0.0)
+    auction_current_price = Column(Float, default=0.0)
+    auction_step_interval_min = Column(Integer, default=2)
+    auction_step_amount = Column(Float, default=150.0)
+    auction_started_at = Column(DateTime, nullable=True)
+    is_sold = Column(Boolean, default=False)
+    sold_price = Column(Float, nullable=True)
+
     return_item = relationship("ReturnItem", back_populates="components")
 
 

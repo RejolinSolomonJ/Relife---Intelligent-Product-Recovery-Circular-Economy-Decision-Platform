@@ -20,7 +20,7 @@ import {
   RecordOutcomePayload,
 } from './types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8008';
 
 export async function fetchDashboardData(range: DateRange = '30d'): Promise<DashboardResponse> {
   const url = `${API_BASE_URL}/api/dashboard?range=${range}`;
@@ -262,5 +262,111 @@ export async function recordActualOutcome(payload: RecordOutcomePayload): Promis
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || `Failed to record outcome: ${res.status}`);
   }
+  return await res.json();
+}
+
+// Storefront & Waitlist API Client
+export async function fetchShopListings(params?: {
+  category?: string;
+  condition?: string;
+  listing_type?: string;
+  search?: string;
+}): Promise<{ listings: any[]; total: number }> {
+  const query = new URLSearchParams();
+  if (params?.category) query.append('category', params.category);
+  if (params?.condition) query.append('condition', params.condition);
+  if (params?.listing_type) query.append('listing_type', params.listing_type);
+  if (params?.search) query.append('search', params.search);
+
+  const url = `${API_BASE_URL}/api/shop/listings?${query.toString()}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed to fetch shop listings: ${res.status}`);
+  return await res.json();
+}
+
+export async function publishShopListing(payload: any): Promise<any> {
+  const url = `${API_BASE_URL}/api/shop/listings`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Failed to publish listing: ${res.status}`);
+  }
+  return await res.json();
+}
+
+export async function createWaitlistEnquiry(payload: any): Promise<any> {
+  const url = `${API_BASE_URL}/api/shop/enquiries`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Failed to submit pre-enquiry: ${res.status}`);
+  }
+  return await res.json();
+}
+
+export async function fetchWaitlistEnquiries(): Promise<{
+  enquiries: any[];
+  demand_per_model: any[];
+  total_active_enquiries: number;
+}> {
+  const url = `${API_BASE_URL}/api/shop/enquiries`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed to fetch waitlist enquiries: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchReservations(buyer_email?: string): Promise<{ reservations: any[]; total: number }> {
+  const url = `${API_BASE_URL}/api/shop/reservations${buyer_email ? `?buyer_email=${encodeURIComponent(buyer_email)}` : ''}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed to fetch reservations: ${res.status}`);
+  return await res.json();
+}
+
+export async function confirmReservation(reservationId: number): Promise<any> {
+  const url = `${API_BASE_URL}/api/shop/reservations/${reservationId}/confirm`;
+  const res = await fetch(url, { method: 'POST' });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Failed to confirm reservation: ${res.status}`);
+  }
+  return await res.json();
+}
+
+export async function releaseReservation(reservationId: number): Promise<any> {
+  const url = `${API_BASE_URL}/api/shop/reservations/${reservationId}/release`;
+  const res = await fetch(url, { method: 'POST' });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Failed to release reservation: ${res.status}`);
+  }
+  return await res.json();
+}
+
+export async function triggerExpiryCheck(): Promise<any> {
+  const url = `${API_BASE_URL}/api/shop/reservations/expire-check`;
+  const res = await fetch(url, { method: 'POST' });
+  if (!res.ok) throw new Error(`Failed to run expiry check: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchShopNotifications(email?: string): Promise<{ notifications: any[]; unread_count: number }> {
+  const url = `${API_BASE_URL}/api/shop/notifications${email ? `?user_email=${encodeURIComponent(email)}` : ''}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed to fetch notifications: ${res.status}`);
+  return await res.json();
+}
+
+export async function seedShopDemo(): Promise<any> {
+  const url = `${API_BASE_URL}/api/shop/seed`;
+  const res = await fetch(url, { method: 'POST' });
+  if (!res.ok) throw new Error(`Failed to seed shop demo: ${res.status}`);
   return await res.json();
 }
