@@ -150,6 +150,10 @@ class ImageInspectionResponse(BaseModel):
     blur_score: float
     quality_flag: str
     demo_mode_badge: str
+    detected_category: str = "Laptop"
+    detected_product_label: str = "Laptop Computer"
+    category_confidence: float = 95.0
+    detection_method: str = "YOLOv8 + OpenCV Multi-Spectral"
     defects: List[DefectDetectionItem]
     honesty_notice: str
     inspected_at: str

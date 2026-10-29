@@ -152,6 +152,10 @@ export interface ImageInspectionResponse {
   blur_score: number;
   quality_flag: string;
   demo_mode_badge: string;
+  detected_category?: string;
+  detected_product_label?: string;
+  category_confidence?: number;
+  detection_method?: string;
   model_version?: string;
   defects: DefectDetectionItem[];
   honesty_notice: string;

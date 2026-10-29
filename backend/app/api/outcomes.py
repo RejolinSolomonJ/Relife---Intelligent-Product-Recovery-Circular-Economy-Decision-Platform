@@ -73,8 +73,8 @@ def get_outcomes_summary(db: Session = Depends(get_db)):
         pred_cost = rec.estimated_cost_inr if rec else 5000.0
         pred_pathway = rec.pathway if rec else out.actual_pathway
 
-        act_rev = out.actual_revenue if out.actual_revenue > 0 else (out.actual_value_inr or pred_rev)
-        act_cost = out.actual_cost if out.actual_cost > 0 else (out.refurbish_cost_inr or pred_cost)
+        act_rev = out.actual_revenue if out.actual_revenue > 0 else (getattr(out, "actual_value_inr", None) or pred_rev)
+        act_cost = out.actual_cost if out.actual_cost > 0 else (getattr(out, "refurbish_cost_inr", None) or pred_cost)
 
         pred_nrv = pred_rev - pred_cost
         act_nrv = act_rev - act_cost
