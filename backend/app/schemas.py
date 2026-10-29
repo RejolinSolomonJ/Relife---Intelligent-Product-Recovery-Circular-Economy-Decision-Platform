@@ -91,13 +91,13 @@ class ProductItem(BaseModel):
 
 class CreateReturnRequest(BaseModel):
     product_id: str
-    return_reason: str
-    defect_category: str
-    defect_severity: str
-    defect_description: str
+    return_reason: str = "Customer return"
     needs_human_review: bool = False
     review_reason: Optional[str] = None
     required_test: Optional[str] = None
+    defect_category: str = "scratch"
+    defect_severity: str = "minor"
+    defect_description: str = "Surface hairline blemish"
 
 
 # -------------------------------------------------------------
