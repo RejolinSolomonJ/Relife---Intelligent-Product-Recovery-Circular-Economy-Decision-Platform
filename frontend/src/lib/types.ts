@@ -459,3 +459,81 @@ export interface CreateListingPayload {
   auction_step_interval_min?: number;
   auction_step_amount?: number;
 }
+
+// Supply Chain & Chennai Partner Directory Interfaces
+export interface SupplyChainPartner {
+  id: string;
+  name: string;
+  pathway: string;
+  category_specialization: string[];
+  part_types: string[];
+  hub_area: string;
+  city: string;
+  address: string;
+  distance_km: number;
+  rating: number;
+  reviews_count: number;
+  certifications: string[];
+  lead_time: string;
+  contact_phone: string;
+  contact_email: string;
+  badge_label: string;
+  estimated_pricing_or_payout: string;
+  is_authorized: boolean;
+  capabilities: string[];
+}
+
+export interface NeededPartItem {
+  part_name: string;
+  reason: string;
+  urgency: string;
+  estimated_part_cost_inr: number;
+  nearest_supplier_area: string;
+  typical_availability: string;
+}
+
+export interface SupplyChainMatchResponse {
+  return_id: string;
+  product_name: string;
+  category: string;
+  winner_pathway: string;
+  parameters_summary: {
+    profit_net_value: string;
+    environmental_salvage_score: string;
+    turnaround_velocity: string;
+    risk_minimization: string;
+    circular_suitability_score: string;
+    winner_pathway: string;
+    recommendation_rationale: string;
+  };
+  needed_parts: NeededPartItem[];
+  primary_partners: SupplyChainPartner[];
+  component_providers: SupplyChainPartner[];
+  alternative_agents: SupplyChainPartner[];
+  fulfillment_hub: string;
+  honesty_notice: string;
+}
+
+export interface DispatchRequest {
+  return_id: string;
+  partner_id: string;
+  action_type: 'dispatch_pickup' | 'order_part' | 'book_refurb' | 'list_resale';
+  item_summary?: string;
+  urgency?: 'instant_express' | 'standard' | 'scheduled';
+  notes?: string;
+}
+
+export interface DispatchResponse {
+  success: boolean;
+  dispatch_id: string;
+  partner_id: string;
+  partner_name: string;
+  partner_address: string;
+  action_type: string;
+  tracking_status: string;
+  estimated_arrival_or_pickup: string;
+  contact_hotline: string;
+  qr_dispatch_pass: string;
+  created_at: string;
+  message: string;
+}

@@ -18,9 +18,13 @@ import {
   OutcomeRecordItem,
   OutcomesSummary,
   RecordOutcomePayload,
+  SupplyChainPartner,
+  SupplyChainMatchResponse,
+  DispatchRequest,
+  DispatchResponse,
 } from './types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8008';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8010';
 
 export async function fetchDashboardData(range: DateRange = '30d'): Promise<DashboardResponse> {
   const url = `${API_BASE_URL}/api/dashboard?range=${range}`;
@@ -368,5 +372,49 @@ export async function seedShopDemo(): Promise<any> {
   const url = `${API_BASE_URL}/api/shop/seed`;
   const res = await fetch(url, { method: 'POST' });
   if (!res.ok) throw new Error(`Failed to seed shop demo: ${res.status}`);
+  return await res.json();
+}
+
+// -------------------------------------------------------------
+// Chennai Supply Chain & Circular Logistics Integration
+// -------------------------------------------------------------
+
+export async function fetchSupplyChainPartners(params?: {
+  pathway?: string;
+  category?: string;
+  part_type?: string;
+  location?: string;
+}): Promise<SupplyChainPartner[]> {
+  const searchParams = new URLSearchParams();
+  if (params?.pathway) searchParams.append('pathway', params.pathway);
+  if (params?.category) searchParams.append('category', params.category);
+  if (params?.part_type) searchParams.append('part_type', params.part_type);
+  if (params?.location) searchParams.append('location', params.location);
+
+  const qs = searchParams.toString();
+  const url = `${API_BASE_URL}/api/supply-chain/partners${qs ? `?${qs}` : ''}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed to fetch supply chain partners: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchSupplyChainMatch(returnId: string): Promise<SupplyChainMatchResponse> {
+  const url = `${API_BASE_URL}/api/supply-chain/match/${encodeURIComponent(returnId)}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed to fetch supply chain match for ${returnId}: ${res.status}`);
+  return await res.json();
+}
+
+export async function dispatchSupplyChainOrder(payload: DispatchRequest): Promise<DispatchResponse> {
+  const url = `${API_BASE_URL}/api/supply-chain/dispatch`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Failed to dispatch order: ${res.status}`);
+  }
   return await res.json();
 }

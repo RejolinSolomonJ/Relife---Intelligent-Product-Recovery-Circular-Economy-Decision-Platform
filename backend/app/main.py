@@ -11,10 +11,20 @@ from .api.decision import router as decision_router
 from .api.marketplace import router as marketplace_router
 from .api.outcomes import router as outcomes_router
 from .api.shop import router as shop_router
+from .api.supply_chain import router as supply_chain_router
 from .vision import generate_sample_demo_images
+from .seed_data import seed_demo_data
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
+
+# Seed demo data for Part A & B
+from .database import SessionLocal
+seed_db = SessionLocal()
+try:
+    seed_demo_data(seed_db)
+finally:
+    seed_db.close()
 
 # Prepare sample images directory
 SAMPLE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "samples")
@@ -54,6 +64,16 @@ app.include_router(decision_router)
 app.include_router(marketplace_router)
 app.include_router(outcomes_router)
 app.include_router(shop_router)
+app.include_router(supply_chain_router)
+
+# Include New API Routers (Part A & B)
+from .api.auth import router as auth_router
+from .api.allocation import router as allocation_router
+from .api.admin import router as admin_router
+
+app.include_router(auth_router)
+app.include_router(allocation_router)
+app.include_router(admin_router)
 
 
 @app.get("/")

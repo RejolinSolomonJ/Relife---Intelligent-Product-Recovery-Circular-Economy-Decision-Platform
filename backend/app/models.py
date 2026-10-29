@@ -373,3 +373,169 @@ class Notification(Base):
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
+
+# 18. Users and Authentication (Part B)
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(128), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(255), nullable=False)
+    full_name = Column(String(128), nullable=False)
+    role = Column(String(32), nullable=False, index=True)  # super_admin | inspector | reseller | customer | repair_partner | recycler
+    reseller_tier = Column(String(32), nullable=True)  # Bronze | Silver | Gold (for resellers/customers)
+    is_verified = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
+    otp_code = Column(String(6), nullable=True)  # Simulated OTP
+    otp_expires_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationship
+    enquiries = relationship("ProductEnquiry", back_populates="user")
+    audit_logs = relationship("AuditLog", back_populates="user")
+
+
+# 19. Product Enquiries / Notify Me (Part A - Step 1)
+class ProductEnquiry(Base):
+    __tablename__ = "product_enquiries"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    product_id = Column(String(32), nullable=True)  # Can be null for component enquiries
+    listing_id = Column(Integer, ForeignKey("shop_listings.id"), nullable=True, index=True)
+    model = Column(String(128), nullable=False, index=True)
+    category = Column(String(64), nullable=False)
+    reseller_tier = Column(String(32), nullable=False, default="Bronze")  # Bronze | Silver | Gold
+    quantity_needed = Column(Integer, default=1)
+    max_price = Column(Float, nullable=False)
+    is_urgent = Column(Boolean, default=False)
+    status = Column(String(32), default="active", index=True)  # active | allocated | cancelled | fulfilled
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    
+    # Allocation tracking
+    allocation_score = Column(Float, nullable=True)
+    allocated_at = Column(DateTime, nullable=True)
+    reservation_id = Column(Integer, ForeignKey("reservations.id"), nullable=True)
+    
+    # Relationship
+    user = relationship("User", back_populates="enquiries")
+    allocation_details = relationship("AllocationDetail", back_populates="enquiry", cascade="all, delete-orphan")
+
+
+# 20. Buyer Reliability Stats (Part A - Step 3)
+class BuyerStats(Base):
+    __tablename__ = "buyer_stats"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True, index=True)
+    total_orders = Column(Integer, default=0)
+    confirmed_orders = Column(Integer, default=0)
+    cancelled_reservations = Column(Integer, default=0)
+    total_reservations = Column(Integer, default=0)
+    reliability_score = Column(Float, default=0.5)  # 0.0 to 1.0
+    cancellation_rate = Column(Float, default=0.0)  # 0.0 to 1.0
+    updated_at = Column(DateTime, default=datetime.utcnow)
+
+
+# 21. Allocation Configuration (Part A - Step 3)
+class AllocationConfig(Base):
+    __tablename__ = "allocation_config"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    weight_tier = Column(Float, default=0.25)
+    weight_recency = Column(Float, default=0.20)
+    weight_reliability = Column(Float, default=0.25)
+    weight_price_ratio = Column(Float, default=0.20)
+    weight_cancellation = Column(Float, default=0.10)
+    urgency_bonus = Column(Float, default=0.05)
+    tie_threshold = Column(Float, default=0.02)
+    auction_duration_seconds = Column(Integer, default=60)
+    reservation_window_minutes = Column(Integer, default=20)
+    updated_at = Column(DateTime, default=datetime.utcnow)
+    updated_by = Column(String(128), nullable=True)
+
+
+# 22. Allocation Audit Trail (Part A - Step 5)
+class AllocationRun(Base):
+    __tablename__ = "allocation_runs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    listing_id = Column(Integer, ForeignKey("shop_listings.id"), nullable=False, index=True)
+    trigger_type = Column(String(32), nullable=False)  # auto | manual
+    stock_available = Column(Integer, nullable=False)
+    enquiries_matched = Column(Integer, default=0)
+    enquiries_allocated = Column(Integer, default=0)
+    had_tie_breaker = Column(Boolean, default=False)
+    status = Column(String(32), default="completed")  # running | completed | failed
+    started_at = Column(DateTime, default=datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+    
+    # Relationship
+    allocation_details = relationship("AllocationDetail", back_populates="allocation_run", cascade="all, delete-orphan")
+
+
+# 23. Allocation Detail (Per Enquiry Score Breakdown) (Part A - Step 5)
+class AllocationDetail(Base):
+    __tablename__ = "allocation_details"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    allocation_run_id = Column(Integer, ForeignKey("allocation_runs.id"), nullable=False, index=True)
+    enquiry_id = Column(Integer, ForeignKey("product_enquiries.id"), nullable=False, index=True)
+    user_email = Column(String(128), nullable=False)
+    
+    # Score breakdown
+    tier_score = Column(Float, nullable=False)
+    recency_score = Column(Float, nullable=False)
+    reliability_score = Column(Float, nullable=False)
+    price_ratio_score = Column(Float, nullable=False)
+    cancellation_penalty = Column(Float, nullable=False)
+    urgency_bonus = Column(Float, nullable=False)
+    total_score = Column(Float, nullable=False)
+    
+    # Outcome
+    rank = Column(Integer, nullable=False)
+    was_allocated = Column(Boolean, default=False)
+    allocation_status = Column(String(32), nullable=True)  # allocated | declined | timeout | cascade | tied
+    notified_at = Column(DateTime, nullable=True)
+    responded_at = Column(DateTime, nullable=True)
+    
+    # Relationship
+    allocation_run = relationship("AllocationRun", back_populates="allocation_details")
+    enquiry = relationship("ProductEnquiry", back_populates="allocation_details")
+
+
+# 24. Notification Outbox (Part A - Step 5)
+class NotificationOutbox(Base):
+    __tablename__ = "notification_outbox"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_email = Column(String(128), nullable=False, index=True)
+    channel = Column(String(32), nullable=False)  # in_app | email | sms | whatsapp
+    title = Column(String(160), nullable=False)
+    message = Column(Text, nullable=False)
+    status = Column(String(32), default="pending")  # pending | sent | failed
+    is_simulated = Column(Boolean, default=True)
+    sent_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+# 25. Audit Log (Part B)
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    user_email = Column(String(128), nullable=False, index=True)
+    role = Column(String(32), nullable=False)
+    action = Column(String(128), nullable=False, index=True)
+    target_type = Column(String(64), nullable=True)  # return | product | enquiry | config | user
+    target_id = Column(String(64), nullable=True)
+    before_value = Column(Text, nullable=True)
+    after_value = Column(Text, nullable=True)
+    reason = Column(Text, nullable=True)
+    ip_address = Column(String(45), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    
+    # Relationship
+    user = relationship("User", back_populates="audit_logs")

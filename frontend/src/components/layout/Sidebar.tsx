@@ -17,6 +17,7 @@ import {
   TrendingDown,
   Calculator,
   Bot,
+  ArrowRight,
 } from 'lucide-react';
 import { useNavigation, NavigationTab } from '../../context/NavigationContext';
 
