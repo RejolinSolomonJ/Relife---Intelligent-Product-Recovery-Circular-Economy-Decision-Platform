@@ -314,7 +314,8 @@ def generate_sample_demo_images(target_dir: str):
 
     for fname, bg_color, title, boxes in samples:
         fpath = os.path.join(target_dir, fname)
-        # Always regenerate or update to include apparel samples
+        if os.path.exists(fpath):
+            continue
         img = Image.new("RGB", (640, 640), color=bg_color)
         draw = ImageDraw.Draw(img)
 

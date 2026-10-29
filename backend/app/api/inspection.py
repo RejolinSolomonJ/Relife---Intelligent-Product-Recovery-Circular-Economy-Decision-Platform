@@ -21,7 +21,6 @@ def get_sample_images():
     """
     Returns the list of pre-configured sample inspection images for instant hackathon demos.
     """
-    generate_sample_demo_images(SAMPLE_DIR)
     samples = [
         {
             "id": "laptop_cracked_screen",

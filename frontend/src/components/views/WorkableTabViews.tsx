@@ -56,70 +56,7 @@ export function WorkableTabViews({ onOpenIntake }: WorkableTabViewsProps) {
 
       {/* RECOMMENDATIONS MATRIX */}
       {activeTab === 'recommendations' && (
-        <div className="space-y-6">
-          <Card title="Five-Pathway Decision Engine Matrix">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] font-mono">
-                    <th className="py-3 px-3">Circular Pathway</th>
-                    <th className="py-3 px-3">Qualification Rules</th>
-                    <th className="py-3 px-3">Recovery Yield Target</th>
-                    <th className="py-3 px-3">Avg Realization</th>
-                    <th className="py-3 px-3 text-right">E-Waste Preserved</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  <tr>
-                    <td className="py-3.5 px-3 font-bold text-[#073E2E]">1. Direct Resale</td>
-                    <td className="py-3.5 px-3 text-slate-600">Grade A casing; 100% pass on all visual & electrical tests</td>
-                    <td className="py-3.5 px-3 font-mono text-emerald-700">75% - 85% MSRP</td>
-                    <td className="py-3.5 px-3 font-bold text-slate-800">1 Business Day</td>
-                    <td className="py-3.5 px-3 text-right font-mono text-emerald-700">98% saved</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3.5 px-3 font-bold text-sky-700">2. Repair</td>
-                    <td className="py-3.5 px-3 text-slate-600">Isolated modular failure (cracked screen, battery replacement)</td>
-                    <td className="py-3.5 px-3 font-mono text-emerald-700">55% - 65% MSRP</td>
-                    <td className="py-3.5 px-3 font-bold text-slate-800">2 - 3 Days</td>
-                    <td className="py-3.5 px-3 text-right font-mono text-emerald-700">94% saved</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3.5 px-3 font-bold text-amber-700">3. Refurbishment</td>
-                    <td className="py-3.5 px-3 text-slate-600">Multi-surface scuffs, cosmetic re-casing & battery renew</td>
-                    <td className="py-3.5 px-3 font-mono text-emerald-700">40% - 50% MSRP</td>
-                    <td className="py-3.5 px-3 font-bold text-slate-800">4 - 5 Days</td>
-                    <td className="py-3.5 px-3 text-right font-mono text-emerald-700">90% saved</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3.5 px-3 font-bold text-purple-700">4. Harvesting</td>
-                    <td className="py-3.5 px-3 text-slate-600">Repair uneconomic; harvest working display, RAM, SSD</td>
-                    <td className="py-3.5 px-3 font-mono text-emerald-700">25% - 35% MSRP</td>
-                    <td className="py-3.5 px-3 font-bold text-slate-800">3 Days</td>
-                    <td className="py-3.5 px-3 text-right font-mono text-emerald-700">75% saved</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3.5 px-3 font-bold text-emerald-700">5. Recycling</td>
-                    <td className="py-3.5 px-3 text-slate-600">End-of-life unrecoverable faults; zero-landfill smelting</td>
-                    <td className="py-3.5 px-3 font-mono text-emerald-700">8% - 14% MSRP</td>
-                    <td className="py-3.5 px-3 font-bold text-slate-800">5 Days</td>
-                    <td className="py-3.5 px-3 text-right font-mono text-emerald-700">85% smelted</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div className="pt-4 mt-2 border-t border-slate-100 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setActiveTab('register')}
-                className="px-4 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#073E2E] text-xs font-bold border border-slate-200 transition-all"
-              >
-                Evaluate Product with Live Sliders →
-              </button>
-            </div>
-          </Card>
-        </div>
+        <InspectionWorkbench />
       )}
 
       {/* COMPONENT MARKETPLACE (Step 8) */}

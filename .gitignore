@@ -45,3 +45,7 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Temporary captures
+backend/app/static/samples/capture_*
+backend/app/static/samples/*.tmp
+
