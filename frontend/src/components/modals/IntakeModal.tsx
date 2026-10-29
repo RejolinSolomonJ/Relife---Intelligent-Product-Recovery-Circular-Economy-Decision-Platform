@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { ProductItem, CreateReturnPayload } from '../../lib/types';
 import { fetchProducts, createReturn } from '../../lib/api';
-import { X, PlusCircle, CheckCircle2, AlertCircle, ScanLine, Sparkles } from 'lucide-react';
+import { X, PlusCircle, CheckCircle2, AlertCircle, ScanLine, Sparkles, Camera } from 'lucide-react';
 import { formatINR } from '../../lib/formatters';
+import { useNavigation } from '../../context/NavigationContext';
 
 interface IntakeModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface IntakeModalProps {
 }
 
 export function IntakeModal({ isOpen, onClose, onSuccess }: IntakeModalProps) {
+  const { setActiveTab } = useNavigation();
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<string>('');
   const [returnReason, setReturnReason] = useState<string>('Customer return - cosmetic inspection');
@@ -101,6 +103,28 @@ export function IntakeModal({ isOpen, onClose, onSuccess }: IntakeModalProps) {
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto text-xs">
+          {/* Direct Camera Inspection CTA */}
+          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/90 flex items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2.5 text-slate-800">
+              <div className="w-7 h-7 rounded-lg bg-emerald-200/80 text-[#073E2E] flex items-center justify-center shrink-0">
+                <Camera className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-bold text-xs text-slate-900 block">Want Live Camera Optical Inspection?</span>
+                <span className="text-[10px] text-slate-500">Capture with webcam, check fabric / electronics & run OpenCV</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                setActiveTab('inspections');
+              }}
+              className="px-3 py-1.5 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold text-xs transition-colors shrink-0 shadow-xs cursor-pointer"
+            >
+              Open Camera →
+            </button>
+          </div>
           {feedback && (
             <div
               className={`p-3 rounded-xl flex items-center gap-2 ${

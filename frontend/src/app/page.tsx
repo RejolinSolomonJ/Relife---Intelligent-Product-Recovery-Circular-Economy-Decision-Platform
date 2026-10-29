@@ -145,6 +145,7 @@ export default function DashboardPage() {
                   kpis={data?.kpis || null}
                   isLoading={isLoading}
                   onOpenIntake={() => setIsAddModalOpen(true)}
+                  onOpenScan={() => setActiveTab('inspections')}
                   onRunTriage={handleRunTriage}
                   onOpenReviewQueue={handleOpenReviewQueue}
                   onOpenTransfer={() => setActiveTab('recommendations')}

@@ -7,6 +7,7 @@ import { formatINR, formatKg } from '../../lib/formatters';
 import { RecoveryWizard } from '../wizard/RecoveryWizard';
 import { MarketplaceWorkbench } from '../marketplace/MarketplaceWorkbench';
 import { OutcomeTrackingWorkbench } from '../outcomes/OutcomeTrackingWorkbench';
+import { InspectionWorkbench } from './InspectionWorkbench';
 import {
   ScanEye,
   Camera,
@@ -48,73 +49,9 @@ export function WorkableTabViews({ onOpenIntake }: WorkableTabViewsProps) {
         <RecoveryWizard />
       )}
 
-      {/* INSPECTIONS WORKBENCH */}
+      {/* INSPECTIONS WORKBENCH (Live Camera Capture & Multi-Source Image Intake) */}
       {activeTab === 'inspections' && (
-        <div className="space-y-6">
-          <Card title="Computer Vision Optical Inspection Workbench">
-            <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 text-xs flex items-center justify-between">
-                <span className="text-emerald-900 font-medium">
-                  <strong>OpenCV Preprocessing Engine:</strong> Bilateral edge-preserving denoising + Laplacian blur variance grading (threshold: 100.0).
-                </span>
-                <span className="text-[10px] font-mono text-[#073E2E] px-2 py-0.5 rounded-full bg-emerald-100 border border-emerald-200 font-bold">
-                  Demo Mode Active
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                  <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                    <Camera className="w-4 h-4 text-[#073E2E]" />
-                    <span>Laplacian Blur Check</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    Calculates variance of the second derivative of pixel intensity. Flags handheld motion blur.
-                  </p>
-                  <span className="text-xs font-mono font-bold text-emerald-700 block pt-1">
-                    Threshold: &lt; 100 Variance = Blurry
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                  <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                    <ScanEye className="w-4 h-4 text-sky-600" />
-                    <span>Defect Classes Detected</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    Cracks, Dents, Scratches, and Missing Parts classified with bounding boxes and severity metrics.
-                  </p>
-                  <span className="text-xs font-mono font-bold text-sky-700 block pt-1">
-                    4 Core Anomaly Categories
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                  <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                    <span>Safety Constraint Routing</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    Defects exceeding structural thresholds immediately trigger Human Technician review.
-                  </p>
-                  <span className="text-xs font-mono font-bold text-emerald-700 block pt-1">
-                    Absolute Hard Overrides
-                  </span>
-                </div>
-              </div>
-
-              <div className="pt-2 text-center">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('register')}
-                  className="px-6 py-2.5 rounded-xl bg-[#073E2E] hover:bg-[#0A533E] text-white font-bold text-xs shadow-md transition-all cursor-pointer"
-                >
-                  Launch Step-by-Step Vision Diagnostic Wizard
-                </button>
-              </div>
-            </div>
-          </Card>
-        </div>
+        <InspectionWorkbench />
       )}
 
       {/* RECOMMENDATIONS MATRIX */}

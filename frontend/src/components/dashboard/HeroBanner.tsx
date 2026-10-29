@@ -12,12 +12,14 @@ import {
   Eye,
   EyeOff,
   Check,
+  Camera,
 } from 'lucide-react';
 
 interface HeroBannerProps {
   kpis: KPIs | null;
   isLoading: boolean;
   onOpenIntake: () => void;
+  onOpenScan?: () => void;
   onRunTriage: () => void;
   onOpenReviewQueue: () => void;
   onOpenTransfer: () => void;
@@ -27,6 +29,7 @@ export function HeroBanner({
   kpis,
   isLoading,
   onOpenIntake,
+  onOpenScan,
   onRunTriage,
   onOpenReviewQueue,
   onOpenTransfer,
@@ -38,10 +41,10 @@ export function HeroBanner({
   const quickActions = [
     {
       label: 'Scan Product',
-      icon: Send,
+      icon: Camera,
       iconColor: 'text-[#073E2E]',
       circleBg: 'bg-[#DCFCE7] hover:bg-[#BBF7D0]',
-      action: onOpenIntake,
+      action: onOpenScan || onOpenIntake,
     },
     {
       label: 'Add Return',

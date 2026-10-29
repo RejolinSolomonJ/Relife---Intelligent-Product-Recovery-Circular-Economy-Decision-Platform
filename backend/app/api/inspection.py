@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..models import ReturnItem, Inspection, Defect
+from ..models import ReturnItem, Inspection, Defect, Product
 from ..schemas import ImageInspectionResponse, DefectDetectionItem
 from ..vision import detect_defects, generate_sample_demo_images
 
@@ -107,10 +107,6 @@ async def upload_inspection_images(
     and defect detection (crack, dent, scratch, missing part).
     Stores inspection results and defects in the SQLite database.
     """
-    return_item = db.query(ReturnItem).filter(ReturnItem.id == return_id).first()
-    if not return_item:
-        raise HTTPException(status_code=404, detail=f"Return {return_id} not found")
-
     image_bytes = None
     filename_used = "uploaded_inspection.jpg"
 
@@ -141,6 +137,41 @@ async def upload_inspection_images(
         with open(fpath, "rb") as f:
             image_bytes = f.read()
         filename_used = "laptop_cracked_screen.jpg"
+
+    # Ensure return item exists (auto-create if missing for instant camera / direct inspection)
+    return_item = db.query(ReturnItem).filter(ReturnItem.id == return_id).first()
+    if not return_item:
+        fname_check = (filename_used + " " + (sample_filename or "")).lower()
+        is_apparel = any(k in fname_check for k in ["cloth", "dress", "textile", "apparel", "garment", "fabric", "stain", "tear"])
+        cat = "Clothing" if is_apparel else "Laptop"
+        brand = "Zara Circular" if is_apparel else "Lenovo"
+        model_name = "Cotton Blend Midi Dress" if is_apparel else "ThinkPad X1 Carbon Gen 10"
+
+        prod = db.query(Product).filter(Product.category == cat).first()
+        if not prod:
+            prod = Product(
+                id=f"PROD-{cat[:4].upper()}-{int(datetime.utcnow().timestamp()) % 1000:03d}",
+                brand=brand,
+                model=model_name,
+                category=cat,
+                base_msrp=4500.0 if is_apparel else 85000.0,
+                weight_kg=0.45 if is_apparel else 1.45,
+            )
+            db.add(prod)
+            db.flush()
+
+        return_item = ReturnItem(
+            id=return_id,
+            product_id=prod.id,
+            purchase_price=4200.0 if is_apparel else 75000.0,
+            age_months=4,
+            return_reason="Optical Quality Inspection",
+            warranty_status="Active",
+            customer_issue="Visual inspection & circular recovery intake"
+        )
+        db.add(return_item)
+        db.commit()
+        db.refresh(return_item)
 
     # Run OpenCV pipeline & Defect Detection
     device_hint = return_item.product.category if return_item.product else "Laptop"
